@@ -17,6 +17,7 @@ func (f *Inventory) Put(dtInv *data.Inventory) error {
 		dtInv.ID = bson.NewObjectId()
 	}
 
+	dtInv.PreSave()
 	_, err := f.Session.DB("").C(inventoryC).UpsertId(dtInv.ID, dtInv)
 	return err
 }

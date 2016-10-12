@@ -17,6 +17,8 @@ func (p Product) Put(dtProduct *data.Product) error {
 		dtProduct.ID = bson.NewObjectId()
 	}
 
+	dtProduct.PreSave()
+
 	_, err := p.Session.DB("").C(productC).UpsertId(dtProduct.ID, dtProduct)
 	return err
 }

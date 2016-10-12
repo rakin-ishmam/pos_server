@@ -17,6 +17,8 @@ func (c Category) Put(dtCategory *data.Category) error {
 		dtCategory.ID = bson.NewObjectId()
 	}
 
+	dtCategory.PreSave()
+
 	_, err := c.Session.DB("").C(categoryC).UpsertId(dtCategory.ID, dtCategory)
 	return err
 }

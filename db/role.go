@@ -17,6 +17,8 @@ func (r Role) Put(dtRole *data.Role) error {
 		dtRole.ID = bson.NewObjectId()
 	}
 
+	dtRole.PreSave()
+
 	_, err := r.Session.DB("").C(roleC).UpsertId(dtRole.ID, dtRole)
 	return err
 }
