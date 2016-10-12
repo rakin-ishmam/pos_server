@@ -42,7 +42,7 @@ func (f *Fetch) Do() {
 	}
 
 	f.ResPayload = DetailPayload{}
-	f.ResPayload.loadFromData(dtFile)
+	f.ResPayload.LoadFromData(dtFile)
 }
 
 // AccessValidate checks access permission

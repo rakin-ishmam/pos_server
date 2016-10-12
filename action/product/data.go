@@ -1,27 +1,11 @@
 package product
 
 import (
-	"time"
-
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/data"
 )
-
-// ID stroe only id field of the Product
-type ID struct {
-	ID string `json:"id, omitempty"`
-}
-
-func (i *ID) loadFromData(dtProd *data.Product) {
-	i.ID = string(dtProd.ID)
-}
-
-func (i *ID) loadToData(dtProd *data.Product) {
-	if bson.IsObjectIdHex(i.ID) {
-		dtProd.ID = bson.ObjectIdHex(i.ID)
-	}
-}
 
 // CreatePayload stores data for Product create
 type CreatePayload struct {
@@ -34,7 +18,8 @@ type CreatePayload struct {
 	Quantity   int     `json:"quantity"`
 }
 
-func (c *CreatePayload) loadFromData(dtProd *data.Product) {
+// LoadFromData copy data
+func (c *CreatePayload) LoadFromData(dtProd *data.Product) {
 	c.Name = dtProd.Name
 	c.Code = dtProd.Code
 	c.AvtFileID = dtProd.AvtFileID
@@ -44,7 +29,8 @@ func (c *CreatePayload) loadFromData(dtProd *data.Product) {
 	c.Quantity = dtProd.Quantity
 }
 
-func (c *CreatePayload) loadToData(dtProd *data.Product) {
+// LoadToData copy to data
+func (c *CreatePayload) LoadToData(dtProd *data.Product) {
 	dtProd.Name = c.Name
 	dtProd.Code = c.Code
 	dtProd.AvtFileID = c.AvtFileID
@@ -58,52 +44,39 @@ func (c *CreatePayload) loadToData(dtProd *data.Product) {
 
 // UpdatePayload stores update payload for Product
 type UpdatePayload struct {
-	ID
+	geninfo.ID
 	CreatePayload
 }
 
-func (u *UpdatePayload) loadFromData(dtProd *data.Product) {
-	u.ID.loadFromData(dtProd)
-	u.CreatePayload.loadFromData(dtProd)
+// LoadFromData copy data
+func (u *UpdatePayload) LoadFromData(dtProd *data.Product) {
+	u.ID.LoadFromData(&dtProd.Track)
+	u.CreatePayload.LoadFromData(dtProd)
 }
 
-func (u *UpdatePayload) loadToData(dtProd *data.Product) {
-	u.ID.loadToData(dtProd)
-	u.CreatePayload.loadToData(dtProd)
+// LoadToData copy to data
+func (u *UpdatePayload) LoadToData(dtProd *data.Product) {
+	u.ID.LoadToData(&dtProd.Track)
+	u.CreatePayload.LoadToData(dtProd)
 }
 
 // DetailPayload stores detail payload for Product
 type DetailPayload struct {
 	UpdatePayload
 
-	Deleted    bool      `json:"deleted"`
-	CreatedAt  time.Time `json:"created_at"`
-	CreatedBy  string    `json:"created_by"`
-	ModifiedAt time.Time `json:"modified_at"`
-	ModifiedBy string    `json:"modified_by"`
+	geninfo.General
 }
 
-func (d *DetailPayload) loadFromData(dtProd *data.Product) {
-	d.UpdatePayload.loadFromData(dtProd)
+// LoadFromData copy data
+func (d *DetailPayload) LoadFromData(dtProd *data.Product) {
+	d.UpdatePayload.LoadFromData(dtProd)
 
-	d.Deleted = dtProd.Deleted
-	d.CreatedAt = dtProd.CreatedAt
-	d.CreatedBy = string(dtProd.CreatedBy)
-	d.ModifiedAt = dtProd.ModifiedAt
-	d.ModifiedBy = string(dtProd.ModifiedBy)
+	d.General.LoadFromData(&dtProd.Track)
 }
 
-func (d *DetailPayload) loadToData(dtProd *data.Product) {
-	d.UpdatePayload.loadToData(dtProd)
+// LoadToData copy to data
+func (d *DetailPayload) LoadToData(dtProd *data.Product) {
+	d.UpdatePayload.LoadToData(dtProd)
 
-	dtProd.Deleted = d.Deleted
-	dtProd.CreatedAt = d.CreatedAt
-	dtProd.CreatedAt = d.CreatedAt
-	if bson.IsObjectIdHex(d.CreatedBy) {
-		dtProd.CreatedBy = bson.ObjectIdHex(d.CreatedBy)
-	}
-	dtProd.ModifiedAt = d.ModifiedAt
-	if bson.IsObjectIdHex(d.ModifiedBy) {
-		dtProd.ModifiedBy = bson.ObjectIdHex(d.ModifiedBy)
-	}
+	d.General.LoadToData(&dtProd.Track)
 }

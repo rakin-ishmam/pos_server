@@ -1,27 +1,11 @@
 package user
 
 import (
-	"time"
-
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/data"
 )
-
-// ID stroe only id field of the role
-type ID struct {
-	ID string `json:"id, omitempty"`
-}
-
-func (i *ID) loadToData(dtUser *data.User) {
-	if bson.IsObjectIdHex(i.ID) {
-		dtUser.ID = bson.ObjectIdHex(i.ID)
-	}
-}
-
-func (i *ID) loadFromData(dtUser *data.User) {
-	i.ID = string(dtUser.ID)
-}
 
 // CreatePayload stores create data for User
 type CreatePayload struct {
@@ -37,7 +21,8 @@ type CreatePayload struct {
 	Password  string   `json:"password"`
 }
 
-func (c *CreatePayload) loadToData(dtUser *data.User) {
+// LoadToData copy to data
+func (c *CreatePayload) LoadToData(dtUser *data.User) {
 	dtUser.Name = c.Name
 	dtUser.UserName = c.UserName
 	dtUser.Language = data.Language(c.Language)
@@ -52,7 +37,8 @@ func (c *CreatePayload) loadToData(dtUser *data.User) {
 	dtUser.Password = c.Password
 }
 
-func (c *CreatePayload) loadFromData(dtUser *data.User) {
+// LoadFromData copy data
+func (c *CreatePayload) LoadFromData(dtUser *data.User) {
 	c.Name = dtUser.Name
 	c.UserName = dtUser.UserName
 	c.Language = string(dtUser.Language)
@@ -67,7 +53,7 @@ func (c *CreatePayload) loadFromData(dtUser *data.User) {
 
 // UpdatePayload stores update data for User
 type UpdatePayload struct {
-	ID
+	geninfo.ID
 
 	Name      string   `json:"name"`
 	UserName  string   `json:"user_name"`
@@ -80,8 +66,9 @@ type UpdatePayload struct {
 	Phone     []string `json:"phone"`
 }
 
-func (u *UpdatePayload) loadToData(dtUser *data.User) {
-	u.ID.loadToData(dtUser)
+// LoadToData copy to data
+func (u *UpdatePayload) LoadToData(dtUser *data.User) {
+	u.ID.LoadToData(&dtUser.Track)
 
 	dtUser.Name = u.Name
 	dtUser.UserName = u.UserName
@@ -96,8 +83,9 @@ func (u *UpdatePayload) loadToData(dtUser *data.User) {
 	dtUser.Phone = u.Phone
 }
 
-func (u *UpdatePayload) loadFromData(dtUser *data.User) {
-	u.ID.loadFromData(dtUser)
+// LoadFromData copy data
+func (u *UpdatePayload) LoadFromData(dtUser *data.User) {
+	u.ID.LoadFromData(&dtUser.Track)
 
 	u.Name = dtUser.Name
 	u.UserName = dtUser.UserName
@@ -112,23 +100,16 @@ func (u *UpdatePayload) loadFromData(dtUser *data.User) {
 
 // DetailPayload stores detail data for User
 type DetailPayload struct {
-	ID
+	geninfo.ID
 	UpdatePayload
 
-	Deleted    bool      `json:"deleted"`
-	CreatedAt  time.Time `json:"created_at"`
-	CreatedBy  string    `json:"created_by"`
-	ModifiedAt time.Time `json:"modified_at"`
-	ModifiedBy string    `json:"modified_by"`
+	geninfo.General
 }
 
-func (d *DetailPayload) loadFromData(dtUser *data.User) {
-	d.ID.loadFromData(dtUser)
-	d.UpdatePayload.loadFromData(dtUser)
+// LoadFromData copy data
+func (d *DetailPayload) LoadFromData(dtUser *data.User) {
+	d.ID.LoadFromData(&dtUser.Track)
+	d.UpdatePayload.LoadFromData(dtUser)
 
-	d.Deleted = dtUser.Deleted
-	d.CreatedAt = dtUser.CreatedAt
-	d.CreatedBy = string(dtUser.CreatedBy)
-	d.ModifiedAt = dtUser.ModifiedAt
-	d.ModifiedBy = string(dtUser.ModifiedBy)
+	d.General.LoadFromData(&dtUser.Track)
 }

@@ -3,6 +3,7 @@ package role
 import (
 	"time"
 
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
 	"github.com/rakin-ishmam/pos_server/data"
 	"github.com/rakin-ishmam/pos_server/db"
@@ -15,7 +16,7 @@ type Create struct {
 	Who        data.User
 	Role       data.Role
 	ReqPayload CreatePayload
-	ResPayload ID
+	ResPayload geninfo.ID
 	Err        error
 }
 
@@ -27,7 +28,7 @@ func (c *Create) Do() {
 	}
 
 	dtRole := &data.Role{}
-	c.ReqPayload.loadToData(dtRole)
+	c.ReqPayload.LoadToData(dtRole)
 
 	dtRole.CreatedBy = c.Who.ID
 	dtRole.ModifiedBy = c.Who.ID
@@ -50,7 +51,7 @@ func (c *Create) Do() {
 		return
 	}
 
-	c.ResPayload = ID{ID: string(dtRole.ID)}
+	c.ResPayload = geninfo.ID{ID: string(dtRole.ID)}
 }
 
 // AccessValidate checks access permission

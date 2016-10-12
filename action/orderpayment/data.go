@@ -1,27 +1,11 @@
 package orderpayment
 
 import (
-	"time"
-
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/data"
 )
-
-// ID stroe only id field of the OrderPayment
-type ID struct {
-	ID string `json:"id, omitempty"`
-}
-
-func (i *ID) loadFromData(dtPay *data.OrderPayment) {
-	i.ID = string(dtPay.ID)
-}
-
-func (i *ID) loadToData(dtPay *data.OrderPayment) {
-	if bson.IsObjectIdHex(i.ID) {
-		dtPay.ID = bson.ObjectIdHex(i.ID)
-	}
-}
 
 // CreatePayload stores data for OrderPayment create
 type CreatePayload struct {
@@ -32,7 +16,8 @@ type CreatePayload struct {
 	Comment     string  `json:"comment"`
 }
 
-func (c *CreatePayload) loadFromData(dtPay *data.OrderPayment) {
+// LoadFromData copy data
+func (c *CreatePayload) LoadFromData(dtPay *data.OrderPayment) {
 	c.OrderID = string(dtPay.OrderID)
 	c.Amount = dtPay.Amount
 	c.PaymentType = string(dtPay.PaymentType)
@@ -40,7 +25,8 @@ func (c *CreatePayload) loadFromData(dtPay *data.OrderPayment) {
 	c.Comment = dtPay.Comment
 }
 
-func (c *CreatePayload) loadToData(dtPay *data.OrderPayment) {
+// LoadToData copy to data
+func (c *CreatePayload) LoadToData(dtPay *data.OrderPayment) {
 	if bson.IsObjectIdHex(c.OrderID) {
 		dtPay.OrderID = bson.ObjectIdHex(c.OrderID)
 	}
@@ -52,51 +38,39 @@ func (c *CreatePayload) loadToData(dtPay *data.OrderPayment) {
 
 // UpdatePayload stores update payload for OrderPayment
 type UpdatePayload struct {
-	ID
+	geninfo.ID
 	CreatePayload
 }
 
-func (u *UpdatePayload) loadFromData(dtPay *data.OrderPayment) {
-	u.ID.loadFromData(dtPay)
-	u.CreatePayload.loadFromData(dtPay)
+// LoadFromData copy data
+func (u *UpdatePayload) LoadFromData(dtPay *data.OrderPayment) {
+	u.ID.LoadFromData(&dtPay.Track)
+	u.CreatePayload.LoadFromData(dtPay)
 }
 
-func (u *UpdatePayload) loadToData(dtPay *data.OrderPayment) {
-	u.ID.loadToData(dtPay)
-	u.CreatePayload.loadToData(dtPay)
+// LoadToData copy to data
+func (u *UpdatePayload) LoadToData(dtPay *data.OrderPayment) {
+	u.ID.LoadToData(&dtPay.Track)
+	u.CreatePayload.LoadToData(dtPay)
 }
 
 // DetailPayload stores detail payload for OrderPayment
 type DetailPayload struct {
 	UpdatePayload
 
-	Deleted    bool      `json:"deleted"`
-	CreatedAt  time.Time `json:"created_at"`
-	CreatedBy  string    `json:"created_by"`
-	ModifiedAt time.Time `json:"modified_at"`
-	ModifiedBy string    `json:"modified_by"`
+	geninfo.General
 }
 
-func (d *DetailPayload) loadFromData(dtPay *data.OrderPayment) {
-	d.UpdatePayload.loadFromData(dtPay)
+// LoadFromData copy data
+func (d *DetailPayload) LoadFromData(dtPay *data.OrderPayment) {
+	d.UpdatePayload.LoadFromData(dtPay)
 
-	d.Deleted = dtPay.Deleted
-	d.CreatedAt = dtPay.CreatedAt
-	d.CreatedBy = string(dtPay.CreatedBy)
-	d.ModifiedAt = dtPay.ModifiedAt
-	d.ModifiedBy = string(dtPay.ModifiedBy)
+	d.General.LoadFromData(&dtPay.Track)
 }
 
-func (d *DetailPayload) loadToData(dtPay *data.OrderPayment) {
-	d.UpdatePayload.loadToData(dtPay)
+// LoadToData copy to data
+func (d *DetailPayload) LoadToData(dtPay *data.OrderPayment) {
+	d.UpdatePayload.LoadToData(dtPay)
 
-	dtPay.Deleted = d.Deleted
-	dtPay.CreatedAt = d.CreatedAt
-	if bson.IsObjectIdHex(d.CreatedBy) {
-		dtPay.CreatedBy = bson.ObjectIdHex(d.CreatedBy)
-	}
-	dtPay.ModifiedAt = d.ModifiedAt
-	if bson.IsObjectIdHex(d.ModifiedBy) {
-		dtPay.ModifiedBy = bson.ObjectIdHex(d.ModifiedBy)
-	}
+	d.General.LoadToData(&dtPay.Track)
 }

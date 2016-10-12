@@ -1,6 +1,7 @@
 package sellpayment
 
 import (
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
 	"github.com/rakin-ishmam/pos_server/data"
 	"github.com/rakin-ishmam/pos_server/db"
@@ -12,7 +13,7 @@ import (
 type Update struct {
 	Session    *mgo.Session
 	ReqPayload UpdatePayload
-	ResPayload ID
+	ResPayload geninfo.ID
 	Who        data.User
 	Role       data.Role
 	Err        error
@@ -42,7 +43,7 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.ResPayload.loadToData(dtPay)
+	u.ResPayload.LoadToData(&dtPay.Track)
 	if err := dtPay.Validate(); err != nil {
 		u.Err = err
 		return
@@ -59,7 +60,7 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.ResPayload = ID{ID: string(dtPay.ID)}
+	u.ResPayload = geninfo.ID{ID: string(dtPay.ID)}
 }
 
 // AccessValidate returns error

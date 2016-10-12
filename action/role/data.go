@@ -1,27 +1,9 @@
 package role
 
 import (
-	"time"
-
-	"gopkg.in/mgo.v2/bson"
-
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/data"
 )
-
-// ID stroe only id field of the role
-type ID struct {
-	ID string `json:"id, omitempty"`
-}
-
-func (i *ID) loadToData(dtRole *data.Role) {
-	if bson.IsObjectIdHex(i.ID) {
-		dtRole.ID = bson.ObjectIdHex(i.ID)
-	}
-}
-
-func (i *ID) loadFromData(dtRole *data.Role) {
-	i.ID = string(dtRole.ID)
-}
 
 // CreatePayload stores create data for role
 type CreatePayload struct {
@@ -37,7 +19,8 @@ type CreatePayload struct {
 	FileAccess      data.AccessList `json:"file_access"`
 }
 
-func (c *CreatePayload) loadToData(dtRole *data.Role) {
+// LoadToData copy to data
+func (c *CreatePayload) LoadToData(dtRole *data.Role) {
 	dtRole.Name = c.Name
 	dtRole.UserAccess = c.UserAccess
 	dtRole.RoleAccess = c.RoleAccess
@@ -49,7 +32,8 @@ func (c *CreatePayload) loadToData(dtRole *data.Role) {
 	dtRole.FileAccess = c.FileAccess
 }
 
-func (c *CreatePayload) loadFromData(dtRole *data.Role) {
+// LoadFromData copy data
+func (c *CreatePayload) LoadFromData(dtRole *data.Role) {
 	c.Name = dtRole.Name
 	c.UserAccess = dtRole.UserAccess
 	c.RoleAccess = dtRole.RoleAccess
@@ -63,52 +47,40 @@ func (c *CreatePayload) loadFromData(dtRole *data.Role) {
 
 // UpdatePayload stores Update data for role
 type UpdatePayload struct {
-	ID
+	geninfo.ID
 
 	CreatePayload
 }
 
-func (u *UpdatePayload) loadToData(dtRole *data.Role) {
-	u.ID.loadToData(dtRole)
-	u.CreatePayload.loadToData(dtRole)
+// LoadToData copy to data
+func (u *UpdatePayload) LoadToData(dtRole *data.Role) {
+	u.ID.LoadToData(&dtRole.Track)
+	u.CreatePayload.LoadToData(dtRole)
 }
 
-func (u *UpdatePayload) loadFromData(dtRole *data.Role) {
-	u.ID.loadFromData(dtRole)
-	u.CreatePayload.loadFromData(dtRole)
+// LoadFromData copy data
+func (u *UpdatePayload) LoadFromData(dtRole *data.Role) {
+	u.ID.LoadFromData(&dtRole.Track)
+	u.CreatePayload.LoadFromData(dtRole)
 }
 
 // DetailPayload stores detail data for role
 type DetailPayload struct {
 	UpdatePayload
 
-	Deleted    bool      `json:"deleted"`
-	CreatedAt  time.Time `json:"created_at"`
-	CreatedBy  string    `json:"created_by"`
-	ModifiedAt time.Time `json:"modified_at"`
-	ModifiedBy string    `json:"modified_by"`
+	geninfo.General
 }
 
-func (d *DetailPayload) loadToData(dtRole *data.Role) {
-	d.UpdatePayload.loadToData(dtRole)
+// LoadToData copy to data
+func (d *DetailPayload) LoadToData(dtRole *data.Role) {
+	d.UpdatePayload.LoadToData(dtRole)
 
-	dtRole.Deleted = d.Deleted
-	dtRole.CreatedAt = d.CreatedAt
-	if bson.IsObjectIdHex(d.CreatedBy) {
-		dtRole.CreatedBy = bson.ObjectIdHex(d.CreatedBy)
-	}
-	dtRole.ModifiedAt = d.ModifiedAt
-	if bson.IsObjectIdHex(d.ModifiedBy) {
-		dtRole.ModifiedBy = bson.ObjectIdHex(d.ModifiedBy)
-	}
+	d.General.LoadToData(&dtRole.Track)
 }
 
-func (d *DetailPayload) loadFromData(dtRole *data.Role) {
-	d.UpdatePayload.loadFromData(dtRole)
+// LoadFromData copy data
+func (d *DetailPayload) LoadFromData(dtRole *data.Role) {
+	d.UpdatePayload.LoadFromData(dtRole)
 
-	d.Deleted = dtRole.Deleted
-	d.CreatedAt = dtRole.CreatedAt
-	d.CreatedBy = string(dtRole.CreatedBy)
-	d.ModifiedAt = dtRole.ModifiedAt
-	d.ModifiedBy = string(dtRole.ModifiedBy)
+	d.General.LoadFromData(&dtRole.Track)
 }

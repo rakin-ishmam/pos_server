@@ -1,27 +1,11 @@
 package customer
 
 import (
-	"time"
-
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/data"
 )
-
-// ID stroe only id field of the Customer
-type ID struct {
-	ID string `json:"id, omitempty"`
-}
-
-func (i *ID) loadFromData(dtCus *data.Customer) {
-	i.ID = string(dtCus.ID)
-}
-
-func (i *ID) loadToData(dtCus *data.Customer) {
-	if bson.IsObjectIdHex(i.ID) {
-		dtCus.ID = bson.ObjectIdHex(i.ID)
-	}
-}
 
 // CreatePayload stores create data of the Customer
 type CreatePayload struct {
@@ -34,7 +18,8 @@ type CreatePayload struct {
 	Phone     []string `json:"phone"`
 }
 
-func (c *CreatePayload) loadFromData(dtCus *data.Customer) {
+// LoadFromData copy data
+func (c *CreatePayload) LoadFromData(dtCus *data.Customer) {
 	c.Name = dtCus.Name
 	c.AvtFileID = string(dtCus.AvtFileID)
 	c.Code = dtCus.Code
@@ -44,7 +29,8 @@ func (c *CreatePayload) loadFromData(dtCus *data.Customer) {
 	c.Phone = dtCus.Phone
 }
 
-func (c *CreatePayload) loadToData(dtCus *data.Customer) {
+// LoadToData copy to data
+func (c *CreatePayload) LoadToData(dtCus *data.Customer) {
 	dtCus.Name = c.Name
 	if bson.IsObjectIdHex(c.AvtFileID) {
 		dtCus.AvtFileID = bson.ObjectIdHex(c.AvtFileID)
@@ -58,51 +44,39 @@ func (c *CreatePayload) loadToData(dtCus *data.Customer) {
 
 // UpdatePayload stores update payload of the Customer
 type UpdatePayload struct {
-	ID
+	geninfo.ID
 	CreatePayload
 }
 
-func (u *UpdatePayload) loadFromData(dtCus *data.Customer) {
-	u.ID.loadFromData(dtCus)
-	u.CreatePayload.loadFromData(dtCus)
+// LoadFromData copy data
+func (u *UpdatePayload) LoadFromData(dtCus *data.Customer) {
+	u.ID.LoadFromData(&dtCus.Track)
+	u.CreatePayload.LoadFromData(dtCus)
 }
 
-func (u *UpdatePayload) loadToData(dtCus *data.Customer) {
-	u.ID.loadToData(dtCus)
-	u.CreatePayload.loadToData(dtCus)
+// LoadToData copy to data
+func (u *UpdatePayload) LoadToData(dtCus *data.Customer) {
+	u.ID.LoadToData(&dtCus.Track)
+	u.CreatePayload.LoadToData(dtCus)
 }
 
 // DetailPayload stores detail payload of the Customer
 type DetailPayload struct {
 	UpdatePayload
 
-	Deleted    bool      `json:"deleted"`
-	CreatedAt  time.Time `json:"created_at"`
-	CreatedBy  string    `json:"created_by"`
-	ModifiedAt time.Time `json:"modified_at"`
-	ModifiedBy string    `json:"modified_by"`
+	geninfo.General
 }
 
-func (d *DetailPayload) loadFromData(dtCus *data.Customer) {
-	d.UpdatePayload.loadFromData(dtCus)
+// LoadFromData copy data
+func (d *DetailPayload) LoadFromData(dtCus *data.Customer) {
+	d.UpdatePayload.LoadFromData(dtCus)
 
-	d.Deleted = dtCus.Deleted
-	d.CreatedAt = dtCus.CreatedAt
-	d.CreatedBy = string(dtCus.CreatedBy)
-	d.ModifiedAt = dtCus.ModifiedAt
-	d.ModifiedBy = string(dtCus.ModifiedBy)
+	d.General.LoadFromData(&dtCus.Track)
 }
 
-func (d *DetailPayload) loadToData(dtCus *data.Customer) {
-	d.UpdatePayload.loadToData(dtCus)
+// LoadToData copy to data
+func (d *DetailPayload) LoadToData(dtCus *data.Customer) {
+	d.UpdatePayload.LoadToData(dtCus)
 
-	dtCus.Deleted = d.Deleted
-	dtCus.CreatedAt = d.CreatedAt
-	if bson.IsObjectIdHex(d.CreatedBy) {
-		dtCus.CreatedBy = bson.ObjectIdHex(d.CreatedBy)
-	}
-	dtCus.ModifiedAt = d.ModifiedAt
-	if bson.IsObjectIdHex(d.ModifiedBy) {
-		dtCus.ModifiedBy = bson.ObjectIdHex(d.ModifiedBy)
-	}
+	d.General.LoadToData(&dtCus.Track)
 }

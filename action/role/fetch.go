@@ -43,7 +43,7 @@ func (f *Fetch) Do() {
 	}
 
 	f.ResPayload = &DetailPayload{}
-	f.ResPayload.loadFromData(dtRole)
+	f.ResPayload.LoadFromData(dtRole)
 }
 
 // AccessValidate returns error. it checkes access permission

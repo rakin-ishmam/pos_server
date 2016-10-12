@@ -3,6 +3,7 @@ package inventory
 import (
 	"time"
 
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
 	"github.com/rakin-ishmam/pos_server/data"
 	"github.com/rakin-ishmam/pos_server/db"
@@ -13,7 +14,7 @@ import (
 type Create struct {
 	Session    *mgo.Session
 	ReqPayload CreatePayload
-	ResPayload ID
+	ResPayload geninfo.ID
 	Who        data.User
 	Role       data.Role
 	Err        error
@@ -27,7 +28,7 @@ func (c *Create) Do() {
 	}
 
 	dtInv := &data.Inventory{}
-	c.ReqPayload.loadToData(dtInv)
+	c.ReqPayload.LoadToData(dtInv)
 
 	dtInv.CreatedBy = c.Who.ID
 	dtInv.ModifiedBy = c.Who.ID
@@ -50,7 +51,7 @@ func (c *Create) Do() {
 		return
 	}
 
-	c.ResPayload = ID{ID: string(dtInv.ID)}
+	c.ResPayload = geninfo.ID{ID: string(dtInv.ID)}
 }
 
 // Validate takes Inventory data and returns error

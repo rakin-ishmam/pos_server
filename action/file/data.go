@@ -1,88 +1,59 @@
 package file
 
 import (
-	"time"
-
-	"gopkg.in/mgo.v2/bson"
-
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/data"
 )
-
-// ID stroe only id field of the Category
-type ID struct {
-	ID string `json:"id, omitempty"`
-}
-
-func (i *ID) loadFromData(dtFile *data.File) {
-	i.ID = string(dtFile.ID)
-}
-
-func (i *ID) loadToData(dtFile *data.File) {
-	if bson.IsObjectIdHex(i.ID) {
-		dtFile.ID = bson.ObjectIdHex(i.ID)
-	}
-}
 
 // CreatePayload stores data for File create
 type CreatePayload struct {
 	Location string `gorethink:"location"`
 }
 
-func (c *CreatePayload) loadFromData(dtFile *data.File) {
+// LoadFromData copy data
+func (c *CreatePayload) LoadFromData(dtFile *data.File) {
 	c.Location = dtFile.Location
 }
 
-func (c *CreatePayload) loadToData(dtFile *data.File) {
+// LoadToData copy to data
+func (c *CreatePayload) LoadToData(dtFile *data.File) {
 	dtFile.Location = c.Location
 }
 
 // UpdatePayload stores update payload for File
 type UpdatePayload struct {
-	ID
+	geninfo.ID
 	CreatePayload
 }
 
-func (u *UpdatePayload) loadFromData(dtFile *data.File) {
-	u.ID.loadFromData(dtFile)
-	u.CreatePayload.loadFromData(dtFile)
+// LoadFromData copy data
+func (u *UpdatePayload) LoadFromData(dtFile *data.File) {
+	u.ID.LoadFromData(&dtFile.Track)
+	u.CreatePayload.LoadFromData(dtFile)
 }
 
-func (u *UpdatePayload) loadToData(dtFile *data.File) {
-	u.ID.loadToData(dtFile)
-	u.CreatePayload.loadToData(dtFile)
+// LoadToData copy to data
+func (u *UpdatePayload) LoadToData(dtFile *data.File) {
+	u.ID.LoadToData(&dtFile.Track)
+	u.CreatePayload.LoadToData(dtFile)
 }
 
 // DetailPayload stores detail payload for Category
 type DetailPayload struct {
 	UpdatePayload
-
-	Deleted    bool      `json:"deleted"`
-	CreatedAt  time.Time `json:"created_at"`
-	CreatedBy  string    `json:"created_by"`
-	ModifiedAt time.Time `json:"modified_at"`
-	ModifiedBy string    `json:"modified_by"`
+	geninfo.General
 }
 
-func (d *DetailPayload) loadFromData(dtFile *data.File) {
-	d.UpdatePayload.loadFromData(dtFile)
+// LoadFromData copy data
+func (d *DetailPayload) LoadFromData(dtFile *data.File) {
+	d.UpdatePayload.LoadFromData(dtFile)
 
-	d.Deleted = dtFile.Deleted
-	d.CreatedAt = dtFile.CreatedAt
-	d.CreatedBy = string(dtFile.CreatedBy)
-	d.ModifiedAt = dtFile.ModifiedAt
-	d.ModifiedBy = string(dtFile.ModifiedBy)
+	d.General.LoadFromData(&dtFile.Track)
 }
 
-func (d *DetailPayload) loadToData(dtFile *data.File) {
-	d.UpdatePayload.loadToData(dtFile)
+// LoadToData copy to data
+func (d *DetailPayload) LoadToData(dtFile *data.File) {
+	d.UpdatePayload.LoadToData(dtFile)
 
-	dtFile.Deleted = d.Deleted
-	dtFile.CreatedAt = d.CreatedAt
-	if bson.IsObjectIdHex(d.CreatedBy) {
-		dtFile.CreatedBy = bson.ObjectIdHex(d.CreatedBy)
-	}
-	dtFile.ModifiedAt = d.ModifiedAt
-	if bson.IsObjectIdHex(d.ModifiedBy) {
-		dtFile.ModifiedBy = bson.ObjectIdHex(d.ModifiedBy)
-	}
+	d.General.LoadToData(&dtFile.Track)
 }

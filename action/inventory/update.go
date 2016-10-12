@@ -3,6 +3,7 @@ package inventory
 import (
 	"time"
 
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
 	"github.com/rakin-ishmam/pos_server/data"
 	"github.com/rakin-ishmam/pos_server/db"
@@ -14,7 +15,7 @@ import (
 type Update struct {
 	Session    *mgo.Session
 	ReqPayload UpdatePayload
-	ResPayload ID
+	ResPayload geninfo.ID
 	Who        data.User
 	Role       data.Role
 	Err        error
@@ -44,7 +45,7 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.ResPayload.loadToData(dtInv)
+	u.ResPayload.LoadToData(&dtInv.Track)
 	if err := dtInv.Validate(); err != nil {
 		u.Err = err
 		return
@@ -62,7 +63,7 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.ResPayload = ID{ID: string(dtInv.ID)}
+	u.ResPayload = geninfo.ID{ID: string(dtInv.ID)}
 }
 
 // AccessValidate returns error

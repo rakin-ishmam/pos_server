@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
 	"github.com/rakin-ishmam/pos_server/data"
 	"github.com/rakin-ishmam/pos_server/db"
@@ -11,7 +12,7 @@ import (
 type Create struct {
 	Session    *mgo.Session
 	ReqPayload CreatePayload
-	ResPayload ID
+	ResPayload geninfo.ID
 	Who        data.User
 	Role       data.Role
 	Err        error
@@ -25,7 +26,7 @@ func (c *Create) Do() {
 	}
 
 	dtUser := &data.User{}
-	c.ReqPayload.loadToData(dtUser)
+	c.ReqPayload.LoadToData(dtUser)
 
 	dtUser.CreatedBy = c.Who.ID
 	dtUser.ModifiedBy = c.Who.ID
@@ -46,7 +47,7 @@ func (c *Create) Do() {
 		return
 	}
 
-	c.ResPayload = ID{ID: string(dtUser.ID)}
+	c.ResPayload = geninfo.ID{ID: string(dtUser.ID)}
 }
 
 // AccessValidate returns error. it checks access permission
