@@ -19,6 +19,11 @@ type Product struct {
 	Quantity    int           `bson:"quantity"`
 }
 
+// PreSave takes the necessary step before saving data
+func (p *Product) PreSave() {
+	p.Track.Search = Spliter(p.Name, p.Code)
+}
+
 // Validate valids Product data
 func (p Product) Validate() error {
 	if p.Code == "" {

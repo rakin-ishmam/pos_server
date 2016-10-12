@@ -13,6 +13,11 @@ type Category struct {
 	CategoryID bson.ObjectId `bson:"category_id, omitempty"`
 }
 
+// PreSave takes the necessary step before saving data
+func (c *Category) PreSave() {
+	c.Track.Search = Spliter(c.Name)
+}
+
 // Validate valides Category
 func (c Category) Validate() error {
 	if c.Name == "" {

@@ -21,6 +21,11 @@ type User struct {
 	Password  string        `bson:"password"`
 }
 
+// PreSave takes the necessary step before saving data
+func (u *User) PreSave() {
+	u.Track.Search = Spliter(u.Name, u.UserName)
+}
+
 // Validate valids user data
 func (u User) Validate() error {
 	if !u.Language.Validate() {

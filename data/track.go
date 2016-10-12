@@ -9,6 +9,7 @@ import (
 // Track provides information of creation and modification
 type Track struct {
 	ID         bson.ObjectId `bson:"_id, omitempty"`
+	Search     []string      `bson:"search"`
 	Deleted    bool          `bson:"deleted"`
 	CreatedAt  time.Time     `bson:"created_at"`
 	CreatedBy  bson.ObjectId `bson:"created_by, omitempty"`

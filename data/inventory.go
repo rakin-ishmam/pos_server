@@ -13,6 +13,11 @@ type Inventory struct {
 	Quantity  int           `bson:"quantity"`
 }
 
+// PreSave takes the necessary step before saving data
+func (inv *Inventory) PreSave() {
+	inv.Track.Search = Spliter(inv.Code)
+}
+
 // Validate valids Inventory data
 func (inv Inventory) Validate() error {
 	return nil

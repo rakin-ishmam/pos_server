@@ -18,6 +18,14 @@ type Customer struct {
 	Phone     []string      `bson:"phone"`
 }
 
+// PreSave takes the necessary step before saving data
+func (c *Customer) PreSave() {
+	c.Track.Search = Spliter(
+		c.Name,
+		c.Code,
+	)
+}
+
 // Validate valids Customer data
 func (c Customer) Validate() error {
 	if c.Name == "" {

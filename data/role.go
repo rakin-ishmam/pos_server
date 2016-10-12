@@ -18,6 +18,11 @@ type Role struct {
 	FileAccess      AccessList `bson:"file_access"`
 }
 
+// PreSave takes the necessary step before saving data
+func (r *Role) PreSave() {
+	r.Track.Search = Spliter(r.Name)
+}
+
 // Validate returns Validation error if Role has invalid field
 func (r Role) Validate() error {
 	accessList := []struct {

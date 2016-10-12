@@ -18,6 +18,11 @@ type OrderProduct struct {
 	Quantity int     `bson:"quantity"`
 }
 
+// PreSave takes the necessary step before saving data
+func (o *Order) PreSave() {
+	o.Track.Search = Spliter(o.Code)
+}
+
 // Validate valids data
 func (o Order) Validate() error {
 	return nil
