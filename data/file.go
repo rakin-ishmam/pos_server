@@ -8,6 +8,6 @@ type File struct {
 }
 
 // Validate valids File data
-func (f *File) Validate() error {
+func (f File) Validate() error {
 	return nil
 }

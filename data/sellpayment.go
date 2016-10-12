@@ -17,7 +17,7 @@ type SellPayment struct {
 }
 
 // Validate valids OrderPayment data
-func (s *SellPayment) Validate() error {
+func (s SellPayment) Validate() error {
 	if !s.PaymentType.Validate() {
 		return apperr.Validation{
 			Where: "SellPayment",

@@ -14,6 +14,6 @@ type Inventory struct {
 }
 
 // Validate valids Inventory data
-func (inv *Inventory) Validate() error {
+func (inv Inventory) Validate() error {
 	return nil
 }

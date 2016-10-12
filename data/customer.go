@@ -19,7 +19,7 @@ type Customer struct {
 }
 
 // Validate valids Customer data
-func (c *Customer) Validate() error {
+func (c Customer) Validate() error {
 	if c.Name == "" {
 		return apperr.Validation{
 			Where: "Customer",

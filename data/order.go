@@ -17,3 +17,8 @@ type OrderProduct struct {
 	Product  Product `bson:"product"`
 	Quantity int     `bson:"quantity"`
 }
+
+// Validate valids data
+func (o Order) Validate() error {
+	return nil
+}

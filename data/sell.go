@@ -15,3 +15,8 @@ type SellProduct struct {
 	Product  Product `bson:"product"`
 	Quantity int     `bson:"quantity"`
 }
+
+// Validate valids data
+func (s Sell) Validate() error {
+	return nil
+}

@@ -14,7 +14,7 @@ type Category struct {
 }
 
 // Validate valides Category
-func (c *Category) Validate() error {
+func (c Category) Validate() error {
 	if c.Name == "" {
 		return apperr.Validation{
 			Where: "Category",

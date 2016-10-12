@@ -19,7 +19,7 @@ type Role struct {
 }
 
 // Validate returns Validation error if Role has invalid field
-func (r *Role) Validate() error {
+func (r Role) Validate() error {
 	accessList := []struct {
 		Field      string
 		AccessList AccessList

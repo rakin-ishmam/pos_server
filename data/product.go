@@ -20,7 +20,7 @@ type Product struct {
 }
 
 // Validate valids Product data
-func (p *Product) Validate() error {
+func (p Product) Validate() error {
 	if p.Code == "" {
 		return apperr.Validation{
 			Where: "Product",

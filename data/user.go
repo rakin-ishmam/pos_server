@@ -22,7 +22,7 @@ type User struct {
 }
 
 // Validate valids user data
-func (u *User) Validate() error {
+func (u User) Validate() error {
 	if !u.Language.Validate() {
 		return apperr.Validation{
 			Where: "User",
