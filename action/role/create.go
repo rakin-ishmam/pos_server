@@ -54,6 +54,16 @@ func (c *Create) Do() {
 	c.ResPayload = geninfo.ID{ID: string(dtRole.ID)}
 }
 
+// ActionErr returns error of the action
+func (c Create) ActionErr() error {
+	return c.Err
+}
+
+// Result returns result of thte action
+func (c Create) Result() interface{} {
+	return c.ResPayload
+}
+
 // AccessValidate checks access permission
 func (c *Create) AccessValidate() error {
 	if !c.Role.RoleAccess.Can(data.AccessWrite) {

@@ -66,6 +66,16 @@ func (u *Update) Do() {
 	u.ResPayload = geninfo.ID{ID: string(dtPay.ID)}
 }
 
+// ActionErr returns error of the action
+func (u Update) ActionErr() error {
+	return u.Err
+}
+
+// Result returns result of thte action
+func (u Update) Result() interface{} {
+	return u.ResPayload
+}
+
 // AccessValidate returns error
 // it checks access permission
 func (u *Update) AccessValidate() error {

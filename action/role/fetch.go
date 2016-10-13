@@ -46,6 +46,16 @@ func (f *Fetch) Do() {
 	f.ResPayload.LoadFromData(dtRole)
 }
 
+// ActionErr returns error of the action
+func (f Fetch) ActionErr() error {
+	return f.Err
+}
+
+// Result returns result of thte action
+func (f Fetch) Result() interface{} {
+	return f.ResPayload
+}
+
 // AccessValidate returns error. it checkes access permission
 func (f *Fetch) AccessValidate() error {
 	if !f.Role.RoleAccess.Can(data.AccessRead) {

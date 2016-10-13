@@ -54,6 +54,16 @@ func (c *Create) Do() {
 	c.ResPayload = geninfo.ID{ID: string(dtPay.ID)}
 }
 
+// ActionErr returns error of the action
+func (c Create) ActionErr() error {
+	return c.Err
+}
+
+// Result returns result of thte action
+func (c Create) Result() interface{} {
+	return c.ResPayload
+}
+
 // Validate takes SellPayment data and returns error
 // it checks data validation
 func (c *Create) Validate(dtPay *data.SellPayment) error {
