@@ -61,7 +61,7 @@ func (c Create) ActionErr() error {
 
 // Result returns result of thte action
 func (c Create) Result() interface{} {
-	return c.ResPayload
+	return &c.ResPayload
 }
 
 // AccessValidate checks access permission

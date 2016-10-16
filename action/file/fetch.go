@@ -52,7 +52,7 @@ func (f Fetch) ActionErr() error {
 
 // Result returns result of thte action
 func (f Fetch) Result() interface{} {
-	return f.ResPayload
+	return &f.ResPayload
 }
 
 // AccessValidate checks access permission

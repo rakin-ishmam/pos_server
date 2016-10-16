@@ -74,7 +74,7 @@ func (u Update) ActionErr() error {
 
 // Result returns result of thte action
 func (u Update) Result() interface{} {
-	return u.ResPayload
+	return &u.ResPayload
 }
 
 // AccessValidate checks access permission
