@@ -13,7 +13,7 @@ type User struct {
 	UserName  string        `bson:"user_name"`
 	Language  Language      `bson:"language"`
 	AvtFileID string        `bson:"avt_file_id"`
-	RoleID    bson.ObjectId `bson:"role_id, omitempty"`
+	RoleID    bson.ObjectId `bson:"role_id,omitempty"`
 	Email     string        `bson:"email"`
 	Address   string        `bson:"address"`
 	Gender    Gender        `bson:"gender"`

@@ -9,7 +9,7 @@ import (
 type SellPayment struct {
 	Track
 
-	SellID      bson.ObjectId `bson:"sell_id, omitempty"`
+	SellID      bson.ObjectId `bson:"sell_id,omitempty"`
 	Amount      float64       `bson:"amount"`
 	PaymentType PaymentType   `bson:"payment_type"`
 	Number      string        `bson:"number"`

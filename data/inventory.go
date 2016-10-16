@@ -7,7 +7,7 @@ type Inventory struct {
 	Track
 
 	Code      string        `bson:"code"`
-	ProductID bson.ObjectId `bson:"product_id, omitempty"`
+	ProductID bson.ObjectId `bson:"product_id,omitempty"`
 	SalePrice float64       `bson:"sale_price"`
 	BuyPrice  float64       `bson:"buy_price"`
 	Quantity  int           `bson:"quantity"`

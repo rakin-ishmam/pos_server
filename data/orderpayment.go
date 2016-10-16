@@ -9,7 +9,7 @@ import (
 type OrderPayment struct {
 	Track
 
-	OrderID     bson.ObjectId `bson:"order_id, omitempty"`
+	OrderID     bson.ObjectId `bson:"order_id,omitempty"`
 	Amount      float64       `bson:"amount"`
 	PaymentType PaymentType   `bson:"payment_type"`
 	Number      string        `bson:"number"`

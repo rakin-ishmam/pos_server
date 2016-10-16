@@ -10,7 +10,7 @@ type Category struct {
 	Track
 
 	Name       string        `bson:"name"`
-	CategoryID bson.ObjectId `bson:"category_id, omitempty"`
+	CategoryID bson.ObjectId `bson:"category_id,omitempty"`
 }
 
 // PreSave takes the necessary step before saving data

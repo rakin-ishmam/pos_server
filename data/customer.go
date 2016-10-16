@@ -10,7 +10,7 @@ type Customer struct {
 	Track
 
 	Name      string        `bson:"name"`
-	AvtFileID bson.ObjectId `bson:"avt_file_id, omitempty"`
+	AvtFileID bson.ObjectId `bson:"avt_file_id,omitempty"`
 	Code      string        `bson:"code"`
 	Email     string        `bson:"email"`
 	Gender    Gender        `bson:"gender"`
