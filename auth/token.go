@@ -5,8 +5,10 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/rakin-ishmam/pos_server/apperr"
 )
 
+// New returns jwt token
 func New(info Info, secret string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"UserName": info.UserName,
@@ -16,6 +18,7 @@ func New(info Info, secret string) (string, error) {
 	return token.SignedString([]byte(secret))
 }
 
+// Decode decodes jwt token
 func Decode(tokenStr, secret string) (*Info, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
@@ -42,5 +45,5 @@ func Decode(tokenStr, secret string) (*Info, error) {
 		return &info, nil
 	}
 
-	return nil, fmt.Errorf("Invalid token")
+	return nil, apperr.Authentication{Where: "Token", Cause: apperr.ValidationInvalid}
 }
