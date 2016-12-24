@@ -1,10 +1,12 @@
 package inventory
 
 import (
+	"io"
 	"time"
 
 	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
+	"github.com/rakin-ishmam/pos_server/converter"
 	"github.com/rakin-ishmam/pos_server/data"
 	"github.com/rakin-ishmam/pos_server/db"
 	mgo "gopkg.in/mgo.v2"
@@ -54,14 +56,13 @@ func (c *Create) Do() {
 	c.ResPayload = geninfo.ID{ID: string(dtInv.ID)}
 }
 
-// ActionErr returns error of the action
-func (c Create) ActionErr() error {
-	return c.Err
-}
-
 // Result returns result of thte action
-func (c Create) Result() interface{} {
-	return &c.ResPayload
+func (c Create) Result() (io.Reader, error) {
+	if c.Err != nil {
+		return nil, c.Err
+	}
+
+	return converter.JSONtoBuff(c.ResPayload)
 }
 
 // Validate takes Inventory data and returns error

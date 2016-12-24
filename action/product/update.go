@@ -1,10 +1,12 @@
 package product
 
 import (
+	"io"
 	"time"
 
 	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
+	"github.com/rakin-ishmam/pos_server/converter"
 	"github.com/rakin-ishmam/pos_server/data"
 	"github.com/rakin-ishmam/pos_server/db"
 	mgo "gopkg.in/mgo.v2"
@@ -66,14 +68,13 @@ func (u *Update) Do() {
 	u.ResPayload = geninfo.ID{ID: string(dtProd.ID)}
 }
 
-// ActionErr returns error of the action
-func (u Update) ActionErr() error {
-	return u.Err
-}
-
 // Result returns result of thte action
-func (u Update) Result() interface{} {
-	return &u.ResPayload
+func (u Update) Result() (io.Reader, error) {
+	if u.Err != nil {
+		return nil, u.Err
+	}
+
+	return converter.JSONtoBuff(u.ResPayload)
 }
 
 // AccessValidate returns error

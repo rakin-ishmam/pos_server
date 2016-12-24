@@ -1,8 +1,9 @@
 package action
 
-// Action is implemented by object who wants to satify action properties
-type Action interface {
+import "io"
+
+// JSONAction provides functionalites for json action
+type JSONAction interface {
 	Do()
-	ActionErr() error
-	Result() interface{}
+	Result() (io.Reader, error)
 }

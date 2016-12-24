@@ -1,7 +1,10 @@
 package role
 
 import (
+	"io"
+
 	"github.com/rakin-ishmam/pos_server/apperr"
+	"github.com/rakin-ishmam/pos_server/converter"
 	"github.com/rakin-ishmam/pos_server/data"
 	"github.com/rakin-ishmam/pos_server/db"
 	mgo "gopkg.in/mgo.v2"
@@ -46,14 +49,13 @@ func (f *Fetch) Do() {
 	f.ResPayload.LoadFromData(dtRole)
 }
 
-// ActionErr returns error of the action
-func (f Fetch) ActionErr() error {
-	return f.Err
-}
-
 // Result returns result of thte action
-func (f Fetch) Result() interface{} {
-	return &f.ResPayload
+func (f Fetch) Result() (io.Reader, error) {
+	if f.Err != nil {
+		return nil, f.Err
+	}
+
+	return converter.JSONtoBuff(f.ResPayload)
 }
 
 // AccessValidate returns error. it checkes access permission
