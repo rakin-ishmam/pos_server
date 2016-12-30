@@ -5,6 +5,7 @@ import (
 
 	"github.com/rakin-ishmam/pos_server/action/admin"
 
+	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 )
 
@@ -19,6 +20,16 @@ func main() {
 
 	if !createAdmin(session) {
 		return
+	}
+
+	r := mux.NewRouter()
+	applyRoutes(r, session)
+
+}
+
+func applyRoutes(r *mux.Router, session *mgo.Session) {
+	for _, v := range allRoutes(session) {
+		r.Methods(v.Metod).Name(v.Name).Path(v.Path).HandlerFunc(v.Handler)
 	}
 }
 
