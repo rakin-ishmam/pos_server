@@ -29,7 +29,7 @@ func main() {
 
 func applyRoutes(r *mux.Router, session *mgo.Session) {
 	for _, v := range allRoutes(session) {
-		r.Methods(v.Metod).Name(v.Name).Path(v.Path).HandlerFunc(v.Handler)
+		r.Methods(v.Metod).Name(v.Name).Path(v.Path).HandlerFunc(logRoute(v))
 	}
 }
 
