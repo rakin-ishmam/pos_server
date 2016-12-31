@@ -8,25 +8,25 @@ import (
 )
 
 // CreateProduct returns action for create Product
-func CreateProduct(w http.ResponseWriter, h *http.Request, Session *mgo.Session) *action.Action {
+func CreateProduct(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
 
 	return nil
 }
 
 // UpdateProduct returns action for upddate Product
-func UpdateProduct(w http.ResponseWriter, h *http.Request, Session *mgo.Session) *action.Action {
+func UpdateProduct(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
 
 	return nil
 }
 
 // DeleteProduct returns action for delete Product
-func DeleteProduct(w http.ResponseWriter, h *http.Request, Session *mgo.Session) *action.Action {
+func DeleteProduct(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
 
 	return nil
 }
 
 // ListProduct returns action for list Product
-func ListProduct(w http.ResponseWriter, h *http.Request, Session *mgo.Session) action.Action {
+func ListProduct(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
 
 	return nil
 }
