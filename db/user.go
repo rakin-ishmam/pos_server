@@ -36,7 +36,7 @@ func (u User) Get(id bson.ObjectId) (*data.User, error) {
 }
 
 // List takes filter steps and return list of User
-func (u User) List(ukip, limit int, filters ...query.Applier) ([]data.User, error) {
+func (u User) List(skip, limit int, filters ...query.Applier) ([]data.User, error) {
 
 	query := bson.M{}
 	for _, step := range filters {
@@ -45,7 +45,7 @@ func (u User) List(ukip, limit int, filters ...query.Applier) ([]data.User, erro
 
 	users := []data.User{}
 
-	err := u.Session.DB("").C(userC).Find(query).Skip(ukip).Limit(limit).All(&users)
+	err := u.Session.DB("").C(userC).Find(query).Skip(skip).Limit(limit).All(&users)
 	if err != nil {
 		return nil, err
 	}
