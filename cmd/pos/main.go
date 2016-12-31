@@ -7,10 +7,11 @@ import (
 
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 func main() {
-
+	test()
 	session, err := mongoSession()
 
 	if err != nil {
@@ -29,7 +30,7 @@ func main() {
 
 func applyRoutes(r *mux.Router, session *mgo.Session) {
 	for _, v := range allRoutes(session) {
-		r.Methods(v.Metod).Name(v.Name).Path(v.Path).HandlerFunc(logRoute(v))
+		r.Methods(v.Method).Name(v.Name).Path(v.Path).HandlerFunc(logRoute(v))
 	}
 }
 
@@ -45,4 +46,14 @@ func createAdmin(ses *mgo.Session) bool {
 		return false
 	}
 	return true
+}
+
+func test() {
+	b := bson.M{}
+	test2(b)
+	fmt.Println(b)
+}
+
+func test2(b bson.M) {
+	b["hagu"] = 1
 }

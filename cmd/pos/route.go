@@ -4,7 +4,7 @@ import "net/http"
 
 // Route represents http pos api route
 type Route struct {
-	Metod   string
+	Method  string
 	Name    string
 	Path    string
 	Handler http.HandlerFunc

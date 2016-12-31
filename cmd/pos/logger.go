@@ -7,8 +7,8 @@ import (
 
 func logRoute(r Route) http.HandlerFunc {
 	return func(w http.ResponseWriter, h *http.Request) {
-		log.Printf("start: Name=%s, Method=%s, Path=%s", r.Name, r.Metod, r.Path)
+		log.Printf("start: Name=%s, Method=%s, Path=%s", r.Name, r.Method, r.Path)
 		r.Handler(w, h)
-		log.Printf("end: Name=%s, Method=%s, Path=%s", r.Name, r.Metod, r.Path)
+		log.Printf("end: Name=%s, Method=%s, Path=%s", r.Name, r.Method, r.Path)
 	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/rakin-ishmam/pos_server/api"
 	"gopkg.in/mgo.v2"
 )
 
@@ -21,7 +22,12 @@ func allRoutes(session *mgo.Session) []Route {
 }
 
 func loginRoutes(rs []Route, session *mgo.Session) {
-
+	rs = append(rs, Route{
+		Name:    "User login",
+		Method:  "POST",
+		Path:    "/api/login",
+		Handler: panicRecover(JSONRunner(api.Login, session)),
+	})
 }
 
 func categoryRoutes(rs []Route, session *mgo.Session) {

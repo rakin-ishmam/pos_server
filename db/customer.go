@@ -2,6 +2,7 @@ package db
 
 import (
 	"github.com/rakin-ishmam/pos_server/data"
+	"github.com/rakin-ishmam/pos_server/db/query"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -35,11 +36,11 @@ func (c Customer) Get(id bson.ObjectId) (*data.Customer, error) {
 }
 
 // List takes filter steps and return list of Customer
-func (c Customer) List(skip, limit int, filters ...QueryFilter) ([]data.Customer, error) {
+func (c Customer) List(skip, limit int, filters ...query.Applier) ([]data.Customer, error) {
 
 	query := bson.M{}
 	for _, step := range filters {
-		query = step.Filter(query)
+		step.Apply(query)
 	}
 
 	customers := []data.Customer{}

@@ -35,3 +35,9 @@ func ListUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) acti
 func FetchUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
 	return nil
 }
+
+// Login returns action to get login
+func Login(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
+
+	return nil
+}
