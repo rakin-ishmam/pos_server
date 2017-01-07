@@ -36,7 +36,7 @@ func (u User) Get(id bson.ObjectId) (*data.User, error) {
 }
 
 // List takes filter steps and return list of User
-func (u User) List(skip, limit int, filters ...query.Applier) ([]data.User, error) {
+func (u User) List(skip, limit int, filters []query.Applier) ([]data.User, error) {
 
 	query := bson.M{}
 	for _, step := range filters {

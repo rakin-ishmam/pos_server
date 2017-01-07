@@ -22,7 +22,7 @@ func (s SellPayment) Validate() error {
 		return apperr.Validation{
 			Where: "SellPayment",
 			Field: "payment_type",
-			Cause: apperr.ValidationInvalid,
+			Cause: apperr.StrInvalid,
 		}
 	}
 

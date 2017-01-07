@@ -1,8 +1,10 @@
 package user
 
 import (
+	"bytes"
 	"io"
 
+	"github.com/rakin-ishmam/pos_server/apperr"
 	"github.com/rakin-ishmam/pos_server/db"
 	mgo "gopkg.in/mgo.v2"
 )
@@ -19,26 +21,34 @@ type Login struct {
 func (l *Login) Do() {
 
 	dbUser := db.User{Session: l.Session}
-	dtUsers, err := dbUser.List(0, 1, l.ReqPayload.query()[0])
-	// err := dbUser.Put(dtUser)
-	// if err != nil {
-	// 	c.Err = apperr.Database{
-	// 		Base:   err,
-	// 		Where:  "User",
-	// 		Action: "Create",
-	// 	}
-	// 	return
-	// }
+	dtUsers, err := dbUser.List(0, 1, l.ReqPayload.query())
 
-	// c.ResPayload = geninfo.ID{ID: string(dtUser.ID)}
+	if err != nil {
+		l.err = apperr.Database{
+			Base:   err,
+			Where:  "User",
+			Action: "Login",
+		}
+		return
+	}
+
+	if len(dtUsers) == 0 {
+		l.err = apperr.Notfound{
+			Where: apperr.StrLogin,
+			What:  apperr.StrUser + "/" + apperr.StrPassword,
+		}
+		return
+	}
+
+	l.token = dtUsers[0].UserName
 }
 
 // Result returns result of the action
 func (l Login) Result() (io.Reader, error) {
-	// if c.Err != nil {
-	// 	return nil, c.Err
-	// }
+	if l.err != nil {
+		return nil, l.err
+	}
 
-	// return converter.JSONtoBuff(c.ResPayload)
-	return nil, nil
+	buff := bytes.NewBuffer([]byte(l.token))
+	return buff, nil
 }

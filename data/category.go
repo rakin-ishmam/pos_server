@@ -24,7 +24,7 @@ func (c Category) Validate() error {
 		return apperr.Validation{
 			Where: "Category",
 			Field: "name",
-			Cause: apperr.ValidationEmpty,
+			Cause: apperr.StrEmpty,
 		}
 	}
 

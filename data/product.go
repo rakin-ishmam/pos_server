@@ -30,7 +30,7 @@ func (p Product) Validate() error {
 		return apperr.Validation{
 			Where: "Product",
 			Field: "code",
-			Cause: apperr.ValidationEmpty,
+			Cause: apperr.StrEmpty,
 		}
 	}
 

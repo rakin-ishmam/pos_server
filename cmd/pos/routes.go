@@ -8,7 +8,7 @@ import (
 func allRoutes(session *mgo.Session) []Route {
 	rs := []Route{}
 
-	loginRoutes(rs, session)
+	loginRoutes(&rs, session)
 	categoryRoutes(rs, session)
 	customerRoutes(rs, session)
 	inventoryRoutes(rs, session)
@@ -21,8 +21,8 @@ func allRoutes(session *mgo.Session) []Route {
 	return rs
 }
 
-func loginRoutes(rs []Route, session *mgo.Session) {
-	rs = append(rs, Route{
+func loginRoutes(rs *[]Route, session *mgo.Session) {
+	*rs = append(*rs, Route{
 		Name:    "User login",
 		Method:  "POST",
 		Path:    "/api/login",

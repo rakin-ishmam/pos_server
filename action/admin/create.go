@@ -5,6 +5,7 @@ import (
 
 	"github.com/rakin-ishmam/pos_server/data"
 	"github.com/rakin-ishmam/pos_server/db"
+	"github.com/rakin-ishmam/pos_server/db/query"
 	mgo "gopkg.in/mgo.v2"
 )
 
@@ -85,7 +86,7 @@ func (c Create) adminRole() data.Role {
 
 func (c Create) hasAnyUser() (bool, error) {
 	dbUser := db.User{Session: c.Session}
-	users, err := dbUser.List(0, 1)
+	users, err := dbUser.List(0, 1, []query.Applier{})
 
 	if err != nil {
 		return false, err

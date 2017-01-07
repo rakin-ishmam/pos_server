@@ -12,6 +12,11 @@ import (
 // ServeErr server error response
 func ServeErr(w http.ResponseWriter, h *http.Request, err error) {
 	switch err.(type) {
+	case apperr.Notfound:
+		w.WriteHeader(http.StatusNotFound)
+	case *apperr.Notfound:
+		w.WriteHeader(http.StatusNotFound)
+
 	case apperr.Access:
 		w.WriteHeader(http.StatusUnauthorized)
 	case *apperr.Access:

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/rakin-ishmam/pos_server/action/admin"
 
@@ -26,10 +27,12 @@ func main() {
 	r := mux.NewRouter()
 	applyRoutes(r, session)
 
+	http.ListenAndServe(":8080", r)
 }
 
 func applyRoutes(r *mux.Router, session *mgo.Session) {
 	for _, v := range allRoutes(session) {
+		fmt.Println("login")
 		r.Methods(v.Method).Name(v.Name).Path(v.Path).HandlerFunc(logRoute(v))
 	}
 }

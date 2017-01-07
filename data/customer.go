@@ -32,7 +32,7 @@ func (c Customer) Validate() error {
 		return apperr.Validation{
 			Where: "Customer",
 			Field: "name",
-			Cause: apperr.ValidationEmpty,
+			Cause: apperr.StrEmpty,
 		}
 	}
 
@@ -40,7 +40,7 @@ func (c Customer) Validate() error {
 		return apperr.Validation{
 			Where: "Customer",
 			Field: "gender",
-			Cause: apperr.ValidationInvalid,
+			Cause: apperr.StrInvalid,
 		}
 	}
 

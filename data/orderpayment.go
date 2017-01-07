@@ -22,7 +22,7 @@ func (o OrderPayment) Validate() error {
 		return apperr.Validation{
 			Where: "OrderPayment",
 			Field: "payment_type",
-			Cause: apperr.ValidationInvalid,
+			Cause: apperr.StrInvalid,
 		}
 	}
 

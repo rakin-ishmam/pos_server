@@ -1,9 +1,12 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/rakin-ishmam/pos_server/action"
+	"github.com/rakin-ishmam/pos_server/action/empty"
+	"github.com/rakin-ishmam/pos_server/action/user"
 	mgo "gopkg.in/mgo.v2"
 )
 
@@ -39,5 +42,16 @@ func FetchUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) act
 // Login returns action to get login
 func Login(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
 
-	return nil
+	loginDt := user.LoginPayload{}
+
+	dec := json.NewDecoder(r.Body)
+	if err := dec.Decode(&loginDt); err != nil {
+		acc := empty.JSON{Err: err}
+		return &acc
+	}
+
+	return &user.Login{
+		Session:    Session,
+		ReqPayload: loginDt,
+	}
 }

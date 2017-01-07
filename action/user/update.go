@@ -91,7 +91,7 @@ func (u Update) Validate() error {
 		return apperr.Validation{
 			Where: "User",
 			Field: "id",
-			Cause: apperr.ValidationInvalid,
+			Cause: apperr.StrInvalid,
 		}
 	}
 

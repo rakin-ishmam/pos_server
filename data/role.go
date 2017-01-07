@@ -42,7 +42,7 @@ func (r Role) Validate() error {
 
 	for _, v := range accessList {
 		if !v.AccessList.Validate() {
-			return apperr.Validation{Where: "Role", Field: v.Field, Cause: apperr.ValidationInvalid}
+			return apperr.Validation{Where: "Role", Field: v.Field, Cause: apperr.StrInvalid}
 		}
 	}
 
