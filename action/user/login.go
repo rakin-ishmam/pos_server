@@ -3,8 +3,11 @@ package user
 import (
 	"bytes"
 	"io"
+	"time"
 
 	"github.com/rakin-ishmam/pos_server/apperr"
+	"github.com/rakin-ishmam/pos_server/auth"
+	"github.com/rakin-ishmam/pos_server/config"
 	"github.com/rakin-ishmam/pos_server/db"
 	mgo "gopkg.in/mgo.v2"
 )
@@ -40,7 +43,8 @@ func (l *Login) Do() {
 		return
 	}
 
-	l.token = dtUsers[0].UserName
+	info := auth.Info{UserName: dtUsers[0].UserName, Exp: time.Now()}
+	l.token, l.err = auth.New(info, config.TokenSecret)
 }
 
 // Result returns result of the action

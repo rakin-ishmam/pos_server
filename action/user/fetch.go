@@ -13,30 +13,30 @@ import (
 
 // Fetch store fetch request data and store data
 type Fetch struct {
-	Session    *mgo.Session
-	ReqID      string
-	ResPayload DetailPayload
-	Who        data.User
-	Role       data.Role
-	Err        error
+	session    *mgo.Session
+	reqID      string
+	resPayload DetailPayload
+	who        data.User
+	role       data.Role
+	err        error
 }
 
 // Do takes necessary steps to fetch user data
 func (f *Fetch) Do() {
 	if err := f.AccessValidate(); err != nil {
-		f.Err = err
+		f.err = err
 		return
 	}
 
 	if err := f.Validate(); err != nil {
-		f.Err = err
+		f.err = err
 		return
 	}
 
-	dbUser := db.User{Session: f.Session}
-	dtUser, err := dbUser.Get(bson.ObjectIdHex(f.ReqID))
+	dbUser := db.User{Session: f.session}
+	dtUser, err := dbUser.Get(bson.ObjectIdHex(f.reqID))
 	if err != nil {
-		f.Err = apperr.Database{
+		f.err = apperr.Database{
 			Base:   err,
 			Where:  "User",
 			Action: "Fetch",
@@ -44,22 +44,22 @@ func (f *Fetch) Do() {
 		return
 	}
 
-	f.ResPayload = DetailPayload{}
-	f.ResPayload.LoadFromData(dtUser)
+	f.resPayload = DetailPayload{}
+	f.resPayload.LoadFromData(dtUser)
 }
 
 // Result returns result of thte action
 func (f Fetch) Result() (io.Reader, error) {
-	if f.Err != nil {
-		return nil, f.Err
+	if f.err != nil {
+		return nil, f.err
 	}
 
-	return converter.JSONtoBuff(f.ResPayload)
+	return converter.JSONtoBuff(f.resPayload)
 }
 
 // AccessValidate checks access permission
 func (f *Fetch) AccessValidate() error {
-	if !f.Role.UserAccess.Can(data.AccessRead) {
+	if !f.role.UserAccess.Can(data.AccessRead) {
 		return apperr.Access{Where: "User", Permission: string(data.AccessRead)}
 	}
 
@@ -68,7 +68,7 @@ func (f *Fetch) AccessValidate() error {
 
 // Validate valids action data
 func (f Fetch) Validate() error {
-	if !bson.IsObjectIdHex(f.ReqID) {
+	if !bson.IsObjectIdHex(f.reqID) {
 		return apperr.Validation{
 			Where: "User",
 			Field: "id",
@@ -76,4 +76,14 @@ func (f Fetch) Validate() error {
 		}
 	}
 	return nil
+}
+
+// NewFetch return pointer of Fetch
+func NewFetch(session *mgo.Session, id string, who data.User, role data.Role) *Fetch {
+	return &Fetch{
+		session: session,
+		reqID:   id,
+		who:     who,
+		role:    role,
+	}
 }

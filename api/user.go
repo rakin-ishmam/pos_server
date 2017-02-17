@@ -1,11 +1,9 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/rakin-ishmam/pos_server/action"
-	"github.com/rakin-ishmam/pos_server/action/empty"
 	"github.com/rakin-ishmam/pos_server/action/user"
 	mgo "gopkg.in/mgo.v2"
 )
@@ -44,10 +42,8 @@ func Login(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.
 
 	loginDt := user.LoginPayload{}
 
-	dec := json.NewDecoder(r.Body)
-	if err := dec.Decode(&loginDt); err != nil {
-		acc := empty.JSON{Err: err}
-		return &acc
+	if errAc := jsonDecode(r, &loginDt, "login", "username and password"); errAc != nil {
+		return errAc
 	}
 
 	return &user.Login{

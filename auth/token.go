@@ -45,5 +45,5 @@ func Decode(tokenStr, secret string) (*Info, error) {
 		return &info, nil
 	}
 
-	return nil, apperr.Authentication{Where: "Token", Cause: apperr.ValidationInvalid}
+	return nil, apperr.Authentication{Where: "Token", Cause: apperr.StrInvalid}
 }
