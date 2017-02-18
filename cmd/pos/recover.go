@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/context"
 	"github.com/rakin-ishmam/pos_server/apperr"
 	"github.com/rakin-ishmam/pos_server/response"
 )
@@ -21,4 +22,6 @@ func catchPanic(w http.ResponseWriter, r *http.Request) {
 		log.Println("error: catchErr: ", err)
 		response.ServeErr(w, r, apperr.Internal{Where: "app panic"})
 	}
+
+	context.Clear(r)
 }

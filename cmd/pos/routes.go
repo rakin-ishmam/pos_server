@@ -9,14 +9,14 @@ func allRoutes(session *mgo.Session) []Route {
 	rs := []Route{}
 
 	loginRoutes(&rs, session)
-	categoryRoutes(&rs, session)
+	categoryRoutes(rs, session)
 	customerRoutes(rs, session)
 	inventoryRoutes(rs, session)
 	orderPaymentRoutes(rs, session)
 	productRoutes(rs, session)
 	roleRoutes(rs, session)
 	sellRoutes(rs, session)
-	userRoutes(rs, session)
+	userRoutes(&rs, session)
 
 	return rs
 }
@@ -64,6 +64,6 @@ func userRoutes(rs *[]Route, session *mgo.Session) {
 		Name:    "Fetch user by id",
 		Method:  "GET",
 		Path:    "/api/user/{id}",
-		Handler: panicRecover(JSONRunner(api.FetchUser, session)),
+		Handler: panicRecover(requiredToken(JSONRunner(api.FetchUser, session), session)),
 	})
 }

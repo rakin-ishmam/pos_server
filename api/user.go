@@ -3,8 +3,10 @@ package api
 import (
 	"net/http"
 
+	"github.com/gorilla/context"
 	"github.com/rakin-ishmam/pos_server/action"
 	"github.com/rakin-ishmam/pos_server/action/user"
+	"github.com/rakin-ishmam/pos_server/data"
 	mgo "gopkg.in/mgo.v2"
 )
 
@@ -33,8 +35,18 @@ func ListUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) acti
 }
 
 // FetchUser returns action to get one user
-func FetchUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
-	return nil
+func FetchUser(w http.ResponseWriter, r *http.Request, session *mgo.Session) action.JSONAction {
+	id, errAc := idFetch(r, "fetch user")
+	if errAc != nil {
+		return errAc
+	}
+
+	var usr data.User
+	var role data.Role
+	usr = context.Get(r, "user").(data.User)
+	role = context.Get(r, "role").(data.Role)
+
+	return user.NewFetch(session, id, usr, role)
 }
 
 // Login returns action to get login

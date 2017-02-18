@@ -9,6 +9,7 @@ import (
 	"github.com/rakin-ishmam/pos_server/auth"
 	"github.com/rakin-ishmam/pos_server/config"
 	"github.com/rakin-ishmam/pos_server/db"
+	"github.com/rakin-ishmam/pos_server/db/query"
 	mgo "gopkg.in/mgo.v2"
 )
 
@@ -23,8 +24,11 @@ type Login struct {
 // Do generate token
 func (l *Login) Do() {
 
+	userQ := query.User{}
+	userQ.EqPassword(l.ReqPayload.Password).EqUserName(l.ReqPayload.UserName)
+
 	dbUser := db.User{Session: l.Session}
-	dtUsers, err := dbUser.List(0, 1, l.ReqPayload.query())
+	dtUsers, err := dbUser.List(0, 1, userQ.Query())
 
 	if err != nil {
 		l.err = apperr.Database{

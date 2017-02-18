@@ -5,20 +5,12 @@ import (
 
 	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/data"
-	"github.com/rakin-ishmam/pos_server/db/query"
 )
 
 // LoginPayload store login info
 type LoginPayload struct {
 	UserName string `json:"user_name"`
 	Password string `json:"password"`
-}
-
-func (l LoginPayload) query() []query.Applier {
-	return []query.Applier{
-		query.EqStep{Key: "user_name", Value: l.UserName},
-		query.EqStep{Key: "password", Value: l.Password},
-	}
 }
 
 // CreatePayload stores create data for User
