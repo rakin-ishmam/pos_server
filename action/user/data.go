@@ -49,7 +49,7 @@ func (c *CreatePayload) LoadFromData(dtUser *data.User) {
 	c.UserName = dtUser.UserName
 	c.Language = string(dtUser.Language)
 	c.AvtFileID = dtUser.AvtFileID
-	c.RoleID = string(dtUser.RoleID)
+	c.RoleID = dtUser.RoleID.Hex()
 	c.Email = dtUser.Email
 	c.Address = dtUser.Address
 	c.Gender = string(dtUser.Gender)
@@ -97,7 +97,7 @@ func (u *UpdatePayload) LoadFromData(dtUser *data.User) {
 	u.UserName = dtUser.UserName
 	u.Language = string(dtUser.Language)
 	u.AvtFileID = dtUser.AvtFileID
-	u.RoleID = string(dtUser.RoleID)
+	u.RoleID = dtUser.RoleID.Hex()
 	u.Email = dtUser.Email
 	u.Address = dtUser.Address
 	u.Gender = string(dtUser.Gender)

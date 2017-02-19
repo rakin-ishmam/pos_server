@@ -14,31 +14,31 @@ import (
 
 // Update manages update process of user
 type Update struct {
-	Session    *mgo.Session
-	ReqPayload UpdatePayload
-	ResPayload geninfo.ID
-	Who        data.User
-	Role       data.Role
-	Err        error
+	session    *mgo.Session
+	reqPayload UpdatePayload
+	resPayload geninfo.ID
+	who        data.User
+	role       data.Role
+	err        error
 }
 
 // Do update user data
 func (u *Update) Do() {
 	if err := u.AccessValidate(); err != nil {
-		u.Err = err
+		u.err = err
 		return
 	}
 
 	if err := u.Validate(); err != nil {
-		u.Err = err
+		u.err = err
 		return
 	}
 
-	dbUser := &db.User{Session: u.Session}
+	dbUser := &db.User{Session: u.session}
 
-	dtUser, err := dbUser.Get(bson.ObjectIdHex(u.ReqPayload.ID.ID))
+	dtUser, err := dbUser.Get(bson.ObjectIdHex(u.reqPayload.ID.ID))
 	if err != nil {
-		u.Err = apperr.Database{
+		u.err = apperr.Database{
 			Where:  "User",
 			Action: "Update",
 			Base:   err,
@@ -46,16 +46,16 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.ResPayload.LoadToData(&dtUser.Track)
+	u.resPayload.LoadToData(&dtUser.Track)
 	if err := dtUser.Validate(); err != nil {
-		u.Err = err
+		u.err = err
 		return
 	}
 
-	dtUser.ModifiedBy = u.Who.ID
+	dtUser.ModifiedBy = u.who.ID
 
 	if err := dbUser.Put(dtUser); err != nil {
-		u.Err = apperr.Database{
+		u.err = apperr.Database{
 			Base:   err,
 			Where:  "User",
 			Action: "Update",
@@ -63,22 +63,22 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.ResPayload = geninfo.ID{ID: string(dtUser.ID)}
+	u.resPayload = geninfo.ID{ID: string(dtUser.ID)}
 }
 
 // Result returns result of thte action
 func (u Update) Result() (io.Reader, error) {
-	if u.Err != nil {
-		return nil, u.Err
+	if u.err != nil {
+		return nil, u.err
 	}
 
-	return converter.JSONtoBuff(u.ResPayload)
+	return converter.JSONtoBuff(u.resPayload)
 }
 
 // AccessValidate returns error
 // it checks access permission
 func (u *Update) AccessValidate() error {
-	if !u.Role.UserAccess.Can(data.AccessUpdate) {
+	if !u.role.UserAccess.Can(data.AccessUpdate) {
 		return apperr.Access{Where: "User", Permission: string(data.AccessUpdate)}
 	}
 
@@ -87,7 +87,7 @@ func (u *Update) AccessValidate() error {
 
 // Validate valdes action data
 func (u Update) Validate() error {
-	if !bson.IsObjectIdHex(u.ReqPayload.ID.ID) {
+	if !bson.IsObjectIdHex(u.reqPayload.ID.ID) {
 		return apperr.Validation{
 			Where: "User",
 			Field: "id",
@@ -96,4 +96,14 @@ func (u Update) Validate() error {
 	}
 
 	return nil
+}
+
+// NewUpdateAction returns user Update action
+func NewUpdateAction(reqPayload UpdatePayload, who data.User, role data.Role, session *mgo.Session) *Update {
+	return &Update{
+		reqPayload: reqPayload,
+		who:        who,
+		role:       role,
+		session:    session,
+	}
 }

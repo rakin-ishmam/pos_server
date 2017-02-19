@@ -66,4 +66,6 @@ func userRoutes(rs *[]Route, session *mgo.Session) {
 		Path:    "/api/user/{id}",
 		Handler: panicRecover(requiredToken(JSONRunner(api.FetchUser, session), session)),
 	})
+
+	// update one user
 }

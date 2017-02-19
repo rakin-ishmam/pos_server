@@ -14,7 +14,7 @@ type ID struct {
 
 // LoadFromData copy from Data
 func (i *ID) LoadFromData(dt *data.Track) {
-	i.ID = string(dt.ID)
+	i.ID = dt.ID.Hex()
 }
 
 // LoadToData copy to Data
