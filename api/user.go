@@ -11,9 +11,16 @@ import (
 )
 
 // CreateUser returns action for create user
-func CreateUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
+func CreateUser(w http.ResponseWriter, r *http.Request, session *mgo.Session) action.JSONAction {
+	usrDt := user.CreatePayload{}
+	if errAc := jsonDecode(r, &usrDt, "CreateUser", "create payload"); errAc != nil {
+		return errAc
+	}
 
-	return nil
+	usr := context.Get(r, "user").(data.User)
+	role := context.Get(r, "role").(data.Role)
+
+	return user.NewCreate(usrDt, usr, role, session)
 }
 
 // UpdateUser returns action for upddate user
@@ -31,10 +38,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, session *mgo.Session) ac
 
 	updateDt.ID.ID = id
 
-	var usr data.User
-	var role data.Role
-	usr = context.Get(r, "user").(data.User)
-	role = context.Get(r, "role").(data.Role)
+	usr := context.Get(r, "user").(data.User)
+	role := context.Get(r, "role").(data.Role)
 
 	return user.NewUpdateAction(updateDt, usr, role, session)
 }

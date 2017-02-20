@@ -13,36 +13,35 @@ import (
 
 // Create manages create process of user
 type Create struct {
-	Session    *mgo.Session
-	ReqPayload CreatePayload
-	ResPayload geninfo.ID
-	Who        data.User
-	Role       data.Role
-	Err        error
+	session    *mgo.Session
+	reqPayload CreatePayload
+	resPayload geninfo.ID
+	who        data.User
+	role       data.Role
+	err        error
 }
 
 // Do creates user
 func (c *Create) Do() {
 	if err := c.AccessValidate(); err != nil {
-		c.Err = err
+		c.err = err
 		return
 	}
 
 	dtUser := &data.User{}
-	c.ReqPayload.LoadToData(dtUser)
+	c.reqPayload.LoadToData(dtUser)
 
-	dtUser.CreatedBy = c.Who.ID
-	dtUser.ModifiedBy = c.Who.ID
+	dtUser.BeforeCreate(c.who.ID)
 
 	if err := dtUser.Validate(); err != nil {
-		c.Err = err
+		c.err = err
 		return
 	}
 
-	dbUser := db.User{Session: c.Session}
+	dbUser := db.User{Session: c.session}
 	err := dbUser.Put(dtUser)
 	if err != nil {
-		c.Err = apperr.Database{
+		c.err = apperr.Database{
 			Base:   err,
 			Where:  "User",
 			Action: "Create",
@@ -50,23 +49,33 @@ func (c *Create) Do() {
 		return
 	}
 
-	c.ResPayload = geninfo.ID{ID: string(dtUser.ID)}
+	c.resPayload = geninfo.ID{ID: dtUser.ID.Hex()}
 }
 
 // Result returns result of the action
 func (c Create) Result() (io.Reader, error) {
-	if c.Err != nil {
-		return nil, c.Err
+	if c.err != nil {
+		return nil, c.err
 	}
 
-	return converter.JSONtoBuff(c.ResPayload)
+	return converter.JSONtoBuff(c.resPayload)
 }
 
 // AccessValidate returns error. it checks access permission
 func (c *Create) AccessValidate() error {
-	if !c.Role.UserAccess.Can(data.AccessWrite) {
+	if !c.role.UserAccess.Can(data.AccessWrite) {
 		return apperr.Access{Where: "User", Permission: string(data.AccessWrite)}
 	}
 
 	return nil
+}
+
+// NewCreate returns user create action
+func NewCreate(reqPayload CreatePayload, who data.User, role data.Role, ses *mgo.Session) *Create {
+	return &Create{
+		who:        who,
+		role:       role,
+		session:    ses,
+		reqPayload: reqPayload,
+	}
 }
