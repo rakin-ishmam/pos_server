@@ -5,7 +5,7 @@ import "os"
 // SesExtMonth represents the user token expire length
 const SesExtMonth = 1
 
-// TokenSecret use to create user login token
+// TokenSecret use to create user login token, ex: TOKEN_SECRET=hagu
 var TokenSecret = os.Getenv("TOKEN_SECRET")
 
 // MongoURI ex: MONGO_URI=mongodb://localhost:27017/pos_server

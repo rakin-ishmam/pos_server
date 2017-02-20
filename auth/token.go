@@ -33,7 +33,6 @@ func Decode(tokenStr, secret string) (*Info, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println(claims["foo"], claims["nbf"])
 
 		info := Info{UserName: claims["UserName"].(string)}
 		info.Exp, err = time.Parse(time.RFC3339, claims["Exp"].(string))

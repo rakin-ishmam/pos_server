@@ -68,4 +68,10 @@ func userRoutes(rs *[]Route, session *mgo.Session) {
 	})
 
 	// update one user
+	*rs = append(*rs, Route{
+		Name:    "Update User",
+		Method:  "PUT",
+		Path:    "/api/user/{id}",
+		Handler: panicRecover(requiredToken(JSONRunner(api.UpdateUser, session), session)),
+	})
 }

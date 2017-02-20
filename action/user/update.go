@@ -46,13 +46,13 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.resPayload.LoadToData(&dtUser.Track)
+	u.reqPayload.LoadToData(dtUser)
 	if err := dtUser.Validate(); err != nil {
 		u.err = err
 		return
 	}
 
-	dtUser.ModifiedBy = u.who.ID
+	dtUser.Track.BeforeUpdate(u.who.ID)
 
 	if err := dbUser.Put(dtUser); err != nil {
 		u.err = apperr.Database{
@@ -63,7 +63,7 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.resPayload = geninfo.ID{ID: string(dtUser.ID)}
+	u.resPayload = geninfo.ID{ID: dtUser.ID.Hex()}
 }
 
 // Result returns result of thte action
@@ -91,6 +91,14 @@ func (u Update) Validate() error {
 		return apperr.Validation{
 			Where: "User",
 			Field: "id",
+			Cause: apperr.StrInvalid,
+		}
+	}
+
+	if !bson.IsObjectIdHex(u.reqPayload.RoleID) {
+		return apperr.Validation{
+			Where: "User",
+			Field: "role_id",
 			Cause: apperr.StrInvalid,
 		}
 	}

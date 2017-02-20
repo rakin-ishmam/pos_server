@@ -37,9 +37,9 @@ type General struct {
 func (g *General) LoadFromData(dt *data.Track) {
 	g.Deleted = dt.Deleted
 	g.CreatedAt = dt.CreatedAt
-	g.CreatedBy = string(dt.CreatedBy)
+	g.CreatedBy = dt.CreatedBy.Hex()
 	g.ModifiedAt = dt.ModifiedAt
-	g.ModifiedBy = string(dt.ModifiedBy)
+	g.ModifiedBy = dt.ModifiedBy.Hex()
 }
 
 // LoadToData copy to Data

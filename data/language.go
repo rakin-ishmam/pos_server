@@ -5,14 +5,13 @@ type Language string
 
 const (
 	// BanglaLanguage represents pos bangla language
-	BanglaLanguage Language = "Bangla"
+	BanglaLanguage Language = "bangla"
 	// EnglishLanguage represents english language
-	EnglishLanguage Language = "English"
+	EnglishLanguage Language = "english"
 )
 
 // Validate returns true if language is valid
 func (l Language) Validate() bool {
-
 	switch l {
 	case BanglaLanguage:
 		return true

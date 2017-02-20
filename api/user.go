@@ -17,9 +17,26 @@ func CreateUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) ac
 }
 
 // UpdateUser returns action for upddate user
-func UpdateUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
+func UpdateUser(w http.ResponseWriter, r *http.Request, session *mgo.Session) action.JSONAction {
+	id, errAc := idFetch(r, "UpdateUser")
+	if errAc != nil {
+		return errAc
+	}
 
-	return nil
+	updateDt := user.UpdatePayload{}
+
+	if errAc = jsonDecode(r, &updateDt, "UpdateUser", "update payload"); errAc != nil {
+		return errAc
+	}
+
+	updateDt.ID.ID = id
+
+	var usr data.User
+	var role data.Role
+	usr = context.Get(r, "user").(data.User)
+	role = context.Get(r, "role").(data.Role)
+
+	return user.NewUpdateAction(updateDt, usr, role, session)
 }
 
 // DeleteUser returns action for delete user

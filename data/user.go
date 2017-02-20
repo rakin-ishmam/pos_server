@@ -31,14 +31,14 @@ func (u User) Validate() error {
 	if !u.Language.Validate() {
 		return apperr.Validation{
 			Where: "User",
-			Field: "language",
+			Field: "Language",
 			Cause: apperr.StrInvalid,
 		}
 	}
 	if !u.Gender.Validate() {
 		return apperr.Validation{
 			Where: "User",
-			Field: "gender",
+			Field: "Gender",
 			Cause: apperr.StrInvalid,
 		}
 	}

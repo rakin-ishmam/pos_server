@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 func main() {
@@ -54,5 +55,12 @@ func createAdmin(ses *mgo.Session) bool {
 }
 
 func test() {
-	fmt.Println(time.Now().AddDate(0, 1, 0))
+	var id bson.ObjectId
+	id = ""
+	if id == "" {
+		fmt.Println("yes-----")
+	} else {
+		fmt.Println("no-----------")
+	}
+	fmt.Println(time.Now().AddDate(0, 1, 0), id)
 }
