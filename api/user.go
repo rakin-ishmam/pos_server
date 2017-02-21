@@ -2,11 +2,13 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/context"
 	"github.com/rakin-ishmam/pos_server/action"
 	"github.com/rakin-ishmam/pos_server/action/user"
 	"github.com/rakin-ishmam/pos_server/data"
+	"github.com/rakin-ishmam/pos_server/db/query"
 	mgo "gopkg.in/mgo.v2"
 )
 
@@ -51,9 +53,20 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) ac
 }
 
 // ListUser returns action for list user
-func ListUser(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
+func ListUser(w http.ResponseWriter, r *http.Request, session *mgo.Session) action.JSONAction {
+	uq := query.User{}
+	urlq := r.URL.Query()
 
-	return nil
+	skip, _ := strconv.ParseInt(urlq.Get("skip"), 10, 64)
+	limit, _ := strconv.ParseInt(urlq.Get("limit"), 10, 64)
+
+	uq.SetSkip(int(skip))
+	uq.SetLimit(int(limit))
+
+	usr := context.Get(r, "user").(data.User)
+	role := context.Get(r, "role").(data.Role)
+
+	return user.NewList(session, uq, usr, role)
 }
 
 // FetchUser returns action to get one user

@@ -72,7 +72,7 @@ func (f Fetch) Validate() error {
 		return apperr.Validation{
 			Where: "Category",
 			Field: "id",
-			Cause: apperr.ValidationInvalid,
+			Cause: apperr.StrInvalid,
 		}
 	}
 	return nil

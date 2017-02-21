@@ -26,9 +26,11 @@ func (l *Login) Do() {
 
 	userQ := query.User{}
 	userQ.EqPassword(l.ReqPayload.Password).EqUserName(l.ReqPayload.UserName)
+	userQ.SetSkip(0)
+	userQ.SetLimit(1)
 
 	dbUser := db.User{Session: l.Session}
-	dtUsers, err := dbUser.List(0, 1, userQ.Query())
+	dtUsers, err := dbUser.List(userQ)
 
 	if err != nil {
 		l.err = apperr.Database{

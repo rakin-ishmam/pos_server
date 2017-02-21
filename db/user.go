@@ -36,16 +36,13 @@ func (u User) Get(id bson.ObjectId) (*data.User, error) {
 }
 
 // List takes filter steps and return list of User
-func (u User) List(skip, limit int, filters []query.Applier) ([]data.User, error) {
+func (u User) List(q query.Query) ([]data.User, error) {
 
-	query := bson.M{}
-	for _, step := range filters {
-		step.Apply(query)
-	}
+	mq := make(u.Session.DB("").C(userC), q)
 
 	users := []data.User{}
 
-	err := u.Session.DB("").C(userC).Find(query).Skip(skip).Limit(limit).All(&users)
+	err := mq.All(&users)
 	if err != nil {
 		return nil, err
 	}

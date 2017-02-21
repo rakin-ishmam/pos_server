@@ -29,9 +29,11 @@ func (t *TokenToUser) Do() {
 
 	usrQ := query.User{}
 	usrQ.EqUserName(info.UserName)
+	usrQ.SetSkip(0)
+	usrQ.SetLimit(1)
 
 	dbUsr := db.User{Session: t.session}
-	dtUsrs, err := dbUsr.List(0, 1, usrQ.Query())
+	dtUsrs, err := dbUsr.List(usrQ)
 	if err != nil {
 		t.err = apperr.NewDatabase(t.err, "user", "TokenToUser")
 		return

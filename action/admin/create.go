@@ -85,8 +85,12 @@ func (c Create) adminRole() data.Role {
 }
 
 func (c Create) hasAnyUser() (bool, error) {
+	userQ := query.User{}
+	userQ.SetSkip(0)
+	userQ.SetLimit(1)
+
 	dbUser := db.User{Session: c.Session}
-	users, err := dbUser.List(0, 1, []query.Applier{})
+	users, err := dbUser.List(userQ)
 
 	if err != nil {
 		return false, err

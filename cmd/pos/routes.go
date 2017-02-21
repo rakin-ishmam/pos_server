@@ -59,6 +59,14 @@ func sellRoutes(rs []Route, session *mgo.Session) {
 }
 
 func userRoutes(rs *[]Route, session *mgo.Session) {
+	//get list of the user
+	*rs = append(*rs, Route{
+		Name:    "List of user",
+		Method:  "GET",
+		Path:    "/api/user/list",
+		Handler: panicRecover(requiredToken(JSONRunner(api.ListUser, session), session)),
+	})
+
 	//get one user by id
 	*rs = append(*rs, Route{
 		Name:    "Fetch user by id",
@@ -82,4 +90,5 @@ func userRoutes(rs *[]Route, session *mgo.Session) {
 		Path:    "/api/user",
 		Handler: panicRecover(requiredToken(JSONRunner(api.CreateUser, session), session)),
 	})
+
 }
