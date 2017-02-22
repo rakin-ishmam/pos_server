@@ -14,7 +14,7 @@ func allRoutes(session *mgo.Session) []Route {
 	inventoryRoutes(rs, session)
 	orderPaymentRoutes(rs, session)
 	productRoutes(rs, session)
-	roleRoutes(rs, session)
+	roleRoutes(&rs, session)
 	sellRoutes(rs, session)
 	userRoutes(&rs, session)
 
@@ -50,8 +50,38 @@ func productRoutes(rs []Route, session *mgo.Session) {
 
 }
 
-func roleRoutes(rs []Route, session *mgo.Session) {
+func roleRoutes(rs *[]Route, session *mgo.Session) {
+	//get list of the role
+	*rs = append(*rs, Route{
+		Name:    "List of Role",
+		Method:  "GET",
+		Path:    "/api/role/list",
+		Handler: panicRecover(requiredToken(JSONRunner(api.ListRole, session), session)),
+	})
 
+	//get one role by id
+	*rs = append(*rs, Route{
+		Name:    "Fetch Role by id",
+		Method:  "GET",
+		Path:    "/api/role/{id}",
+		Handler: panicRecover(requiredToken(JSONRunner(api.FetchRole, session), session)),
+	})
+
+	// update one role
+	*rs = append(*rs, Route{
+		Name:    "Update Role",
+		Method:  "PUT",
+		Path:    "/api/role/{id}",
+		Handler: panicRecover(requiredToken(JSONRunner(api.UpdateRole, session), session)),
+	})
+
+	// create one role
+	*rs = append(*rs, Route{
+		Name:    "Create Role",
+		Method:  "POST",
+		Path:    "/api/role",
+		Handler: panicRecover(requiredToken(JSONRunner(api.CreateRole, session), session)),
+	})
 }
 
 func sellRoutes(rs []Route, session *mgo.Session) {

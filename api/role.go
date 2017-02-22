@@ -30,3 +30,9 @@ func ListRole(w http.ResponseWriter, r *http.Request, Session *mgo.Session) acti
 
 	return nil
 }
+
+// FetchRole returns action to get one role
+func FetchRole(w http.ResponseWriter, r *http.Request, session *mgo.Session) action.JSONAction {
+
+	return nil
+}
