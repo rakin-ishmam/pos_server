@@ -36,16 +36,13 @@ func (r Role) Get(id bson.ObjectId) (*data.Role, error) {
 }
 
 // List takes filter steps and return list of Role
-func (r Role) List(skip, limit int, filters ...query.Applier) ([]data.Role, error) {
+func (r Role) List(q query.Query) ([]data.Role, error) {
 
-	query := bson.M{}
-	for _, step := range filters {
-		step.Apply(query)
-	}
+	mq := make(r.Session.DB("").C(roleC), q)
 
 	roles := []data.Role{}
 
-	err := r.Session.DB("").C(roleC).Find(query).Skip(skip).Limit(limit).All(&roles)
+	err := mq.All(&roles)
 	if err != nil {
 		return nil, err
 	}

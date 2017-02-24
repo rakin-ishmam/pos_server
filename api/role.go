@@ -5,8 +5,10 @@ import (
 
 	"github.com/gorilla/context"
 	"github.com/rakin-ishmam/pos_server/action"
+	"github.com/rakin-ishmam/pos_server/action/empty"
 	"github.com/rakin-ishmam/pos_server/action/role"
 	"github.com/rakin-ishmam/pos_server/data"
+	"github.com/rakin-ishmam/pos_server/db/query"
 	mgo "gopkg.in/mgo.v2"
 )
 
@@ -51,9 +53,18 @@ func DeleteRole(w http.ResponseWriter, r *http.Request, Session *mgo.Session) ac
 }
 
 // ListRole returns action for list Role
-func ListRole(w http.ResponseWriter, r *http.Request, Session *mgo.Session) action.JSONAction {
+func ListRole(w http.ResponseWriter, r *http.Request, session *mgo.Session) action.JSONAction {
+	qr := query.Role{}
 
-	return nil
+	err := urlquery(&qr.GenInfo, r, urlQSkip("ListRole"), urlQLimit("ListRole"))
+	if err != nil {
+		return empty.NewJSON(err)
+	}
+
+	usr := context.Get(r, "user").(data.User)
+	rl := context.Get(r, "role").(data.Role)
+
+	return role.NewList(session, qr, usr, rl)
 }
 
 // FetchRole returns action to get one role
