@@ -1,4 +1,4 @@
-package role
+package product
 
 import (
 	"io"
@@ -14,7 +14,7 @@ import (
 // List provides action to get user list
 type List struct {
 	session    *mgo.Session
-	reqQ       query.Role
+	reqQ       query.Product
 	resPayload []DetailPayload
 	who        data.User
 	role       data.Role
@@ -33,19 +33,19 @@ func (l *List) Do() {
 		return
 	}
 
-	dbRole := db.Role{Session: l.session}
-	dtRoles, err := dbRole.List(l.reqQ)
+	dbProduct := db.Product{Session: l.session}
+	dtProducts, err := dbProduct.List(l.reqQ)
 	if err != nil {
 		l.err = apperr.Database{
 			Base:   err,
-			Where:  "Role",
+			Where:  "Product",
 			Action: "List",
 		}
 		return
 	}
 
 	l.resPayload = []DetailPayload{}
-	for _, dt := range dtRoles {
+	for _, dt := range dtProducts {
 		dtPayload := DetailPayload{}
 		dtPayload.LoadFromData(&dt)
 		l.resPayload = append(l.resPayload, dtPayload)
@@ -63,8 +63,8 @@ func (l List) Result() (io.Reader, error) {
 
 // AccessValidate checks access permission
 func (l *List) AccessValidate() error {
-	if !l.role.RoleAccess.Can(data.AccessRead) {
-		return apperr.Access{Where: "Role", Permission: string(data.AccessRead)}
+	if !l.role.ProductAccess.Can(data.AccessRead) {
+		return apperr.Access{Where: "Product", Permission: string(data.AccessRead)}
 	}
 
 	return nil
@@ -76,7 +76,7 @@ func (l List) Validate() error {
 }
 
 // NewList return pointer of List action
-func NewList(session *mgo.Session, q query.Role, who data.User, role data.Role) *List {
+func NewList(session *mgo.Session, q query.Product, who data.User, role data.Role) *List {
 	return &List{
 		session: session,
 		reqQ:    q,

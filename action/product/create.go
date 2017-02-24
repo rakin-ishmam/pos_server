@@ -2,7 +2,6 @@ package product
 
 import (
 	"io"
-	"time"
 
 	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
@@ -14,40 +13,35 @@ import (
 
 // Create manages create process of the Inventory
 type Create struct {
-	Session    *mgo.Session
-	ReqPayload CreatePayload
-	ResPayload geninfo.ID
-	Who        data.User
-	Role       data.Role
-	Err        error
+	session    *mgo.Session
+	reqPayload CreatePayload
+	resPayload geninfo.ID
+	who        data.User
+	role       data.Role
+	err        error
 }
 
 // Do creates Product
 func (c *Create) Do() {
 	if err := c.AccessValidate(); err != nil {
-		c.Err = err
+		c.err = err
 		return
 	}
 
 	dtProd := &data.Product{}
-	c.ReqPayload.LoadToData(dtProd)
+	c.reqPayload.LoadToData(dtProd)
 
-	dtProd.CreatedBy = c.Who.ID
-	dtProd.ModifiedBy = c.Who.ID
-	dtProd.CreatedAt = time.Now()
-	dtProd.ModifiedAt = dtProd.CreatedAt
-
-	dtProd.ProductType = data.LocalProductType
+	dtProd.BeforeCreate(c.who.ID)
 
 	if err := dtProd.Validate(); err != nil {
-		c.Err = err
+		c.err = err
 		return
 	}
 
-	dbProd := db.Product{Session: c.Session}
+	dbProd := db.Product{Session: c.session}
 	err := dbProd.Put(dtProd)
 	if err != nil {
-		c.Err = apperr.Database{
+		c.err = apperr.Database{
 			Base:   err,
 			Where:  "Product",
 			Action: "Create",
@@ -55,23 +49,33 @@ func (c *Create) Do() {
 		return
 	}
 
-	c.ResPayload = geninfo.ID{ID: string(dtProd.ID)}
+	c.resPayload = geninfo.ID{ID: dtProd.ID.Hex()}
 }
 
 // Result returns result of thte action
 func (c Create) Result() (io.Reader, error) {
-	if c.Err != nil {
-		return nil, c.Err
+	if c.err != nil {
+		return nil, c.err
 	}
 
-	return converter.JSONtoBuff(c.ResPayload)
+	return converter.JSONtoBuff(c.resPayload)
 }
 
 // AccessValidate returns error. it checks access permission
 func (c *Create) AccessValidate() error {
-	if !c.Role.ProductAccess.Can(data.AccessWrite) {
+	if !c.role.ProductAccess.Can(data.AccessWrite) {
 		return apperr.Access{Where: "Product", Permission: string(data.AccessWrite)}
 	}
 
 	return nil
+}
+
+// NewCreate returns action to create role
+func NewCreate(payload CreatePayload, who data.User, role data.Role, ses *mgo.Session) *Create {
+	return &Create{
+		who:        who,
+		role:       role,
+		reqPayload: payload,
+		session:    ses,
+	}
 }

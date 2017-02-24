@@ -30,3 +30,9 @@ func ListProduct(w http.ResponseWriter, r *http.Request, Session *mgo.Session) a
 
 	return nil
 }
+
+// FetchProduct returns action to get list of role
+func FetchProduct(w http.ResponseWriter, r *http.Request, session *mgo.Session) action.JSONAction {
+
+	return nil
+}

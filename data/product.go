@@ -9,14 +9,13 @@ import (
 type Product struct {
 	Track
 
-	Name        string        `bson:"name"`
-	ProductType ProductType   `bson:"product_type"`
-	Code        string        `bson:"code"`
-	AvtFileID   string        `bson:"avt_file_id"`
-	CategoryID  bson.ObjectId `bson:"category_id,omitempty"`
-	SalePrice   float64       `bson:"sale_price"`
-	BuyPrice    float64       `bson:"buy_price"`
-	Quantity    int           `bson:"quantity"`
+	Name       string        `bson:"name"`
+	Code       string        `bson:"code"`
+	AvtFileID  string        `bson:"avt_file_id"`
+	CategoryID bson.ObjectId `bson:"category_id,omitempty"`
+	SalePrice  float64       `bson:"sale_price"`
+	BuyPrice   float64       `bson:"buy_price"`
+	Quantity   int           `bson:"quantity"`
 }
 
 // PreSave takes the necessary step before saving data

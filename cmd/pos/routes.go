@@ -13,7 +13,7 @@ func allRoutes(session *mgo.Session) []Route {
 	customerRoutes(rs, session)
 	inventoryRoutes(rs, session)
 	orderPaymentRoutes(rs, session)
-	productRoutes(rs, session)
+	productRoutes(&rs, session)
 	roleRoutes(&rs, session)
 	sellRoutes(rs, session)
 	userRoutes(&rs, session)
@@ -46,8 +46,38 @@ func orderPaymentRoutes(rs []Route, session *mgo.Session) {
 
 }
 
-func productRoutes(rs []Route, session *mgo.Session) {
+func productRoutes(rs *[]Route, session *mgo.Session) {
+	//get list of the product
+	*rs = append(*rs, Route{
+		Name:    "List of product",
+		Method:  "GET",
+		Path:    "/api/product/list",
+		Handler: panicRecover(requiredToken(JSONRunner(api.ListProduct, session), session)),
+	})
 
+	//get one product by id
+	*rs = append(*rs, Route{
+		Name:    "Fetch product by id",
+		Method:  "GET",
+		Path:    "/api/product/{id}",
+		Handler: panicRecover(requiredToken(JSONRunner(api.FetchProduct, session), session)),
+	})
+
+	// update one product
+	*rs = append(*rs, Route{
+		Name:    "Update product",
+		Method:  "PUT",
+		Path:    "/api/product/{id}",
+		Handler: panicRecover(requiredToken(JSONRunner(api.UpdateProduct, session), session)),
+	})
+
+	// create one product
+	*rs = append(*rs, Route{
+		Name:    "Create product",
+		Method:  "POST",
+		Path:    "/api/product",
+		Handler: panicRecover(requiredToken(JSONRunner(api.CreateProduct, session), session)),
+	})
 }
 
 func roleRoutes(rs *[]Route, session *mgo.Session) {

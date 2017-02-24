@@ -35,17 +35,13 @@ func (p Product) Get(id bson.ObjectId) (*data.Product, error) {
 	return dtProduct, nil
 }
 
-// List takes filter steps and return list of Product
-func (p Product) List(skip, limit int, filters ...query.Applier) ([]data.Product, error) {
-
-	query := bson.M{}
-	for _, step := range filters {
-		step.Apply(query)
-	}
+// List returns list of Product
+func (p Product) List(q query.Query) ([]data.Product, error) {
+	mq := make(p.Session.DB("").C(productC), q)
 
 	products := []data.Product{}
 
-	err := p.Session.DB("").C(productC).Find(query).Skip(skip).Limit(limit).All(&products)
+	err := mq.All(&products)
 	if err != nil {
 		return nil, err
 	}

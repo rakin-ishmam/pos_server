@@ -13,30 +13,30 @@ import (
 
 // Fetch store fetch request data and store data
 type Fetch struct {
-	Session    *mgo.Session
-	ReqID      string
-	ResPayload DetailPayload
-	Who        data.User
-	Role       data.Role
-	Err        error
+	session    *mgo.Session
+	reqID      string
+	resPayload DetailPayload
+	who        data.User
+	role       data.Role
+	err        error
 }
 
 // Do takes necessary steps to fetch Product data
 func (f *Fetch) Do() {
 	if err := f.AccessValidate(); err != nil {
-		f.Err = err
+		f.err = err
 		return
 	}
 
 	if err := f.Validate(); err != nil {
-		f.Err = err
+		f.err = err
 		return
 	}
 
-	dbProd := db.Product{Session: f.Session}
-	dtProd, err := dbProd.Get(bson.ObjectIdHex(f.ReqID))
+	dbProd := db.Product{Session: f.session}
+	dtProd, err := dbProd.Get(bson.ObjectIdHex(f.reqID))
 	if err != nil {
-		f.Err = apperr.Database{
+		f.err = apperr.Database{
 			Base:   err,
 			Where:  "Prod",
 			Action: "Fetch",
@@ -44,22 +44,22 @@ func (f *Fetch) Do() {
 		return
 	}
 
-	f.ResPayload = DetailPayload{}
-	f.ResPayload.LoadFromData(dtProd)
+	f.resPayload = DetailPayload{}
+	f.resPayload.LoadFromData(dtProd)
 }
 
 // Result returns result of thte action
 func (f Fetch) Result() (io.Reader, error) {
-	if f.Err != nil {
-		return nil, f.Err
+	if f.err != nil {
+		return nil, f.err
 	}
 
-	return converter.JSONtoBuff(f.ResPayload)
+	return converter.JSONtoBuff(f.resPayload)
 }
 
 // AccessValidate checks access permission
 func (f *Fetch) AccessValidate() error {
-	if !f.Role.ProductAccess.Can(data.AccessRead) {
+	if !f.role.ProductAccess.Can(data.AccessRead) {
 		return apperr.Access{Where: "Product", Permission: string(data.AccessRead)}
 	}
 
@@ -68,12 +68,22 @@ func (f *Fetch) AccessValidate() error {
 
 // Validate valids action data
 func (f Fetch) Validate() error {
-	if !bson.IsObjectIdHex(f.ReqID) {
+	if !bson.IsObjectIdHex(f.reqID) {
 		return apperr.Validation{
 			Where: "Product",
 			Field: "id",
-			Cause: apperr.ValidationInvalid,
+			Cause: apperr.StrInvalid,
 		}
 	}
 	return nil
+}
+
+// NewFetch returns action to fetch role
+func NewFetch(id string, who data.User, role data.Role, ses *mgo.Session) *Fetch {
+	return &Fetch{
+		who:     who,
+		role:    role,
+		reqID:   id,
+		session: ses,
+	}
 }
