@@ -25,6 +25,7 @@ func (c *CreatePayload) LoadToData(dtRole *data.Role) {
 	dtRole.UserAccess = c.UserAccess
 	dtRole.RoleAccess = c.RoleAccess
 	dtRole.CategoryAccess = c.CategoryAccess
+	dtRole.CustomerAccess = c.CustomerAccess
 	dtRole.InventoryAccess = c.InventoryAccess
 	dtRole.ProductAccess = c.ProductAccess
 	dtRole.SellAccess = c.SellAccess
@@ -37,6 +38,7 @@ func (c *CreatePayload) LoadFromData(dtRole *data.Role) {
 	c.Name = dtRole.Name
 	c.UserAccess = dtRole.UserAccess
 	c.RoleAccess = dtRole.RoleAccess
+	c.CustomerAccess = dtRole.CustomerAccess
 	c.CategoryAccess = dtRole.CategoryAccess
 	c.InventoryAccess = dtRole.InventoryAccess
 	c.ProductAccess = dtRole.ProductAccess

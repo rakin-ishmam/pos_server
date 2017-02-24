@@ -2,7 +2,6 @@ package role
 
 import (
 	"io"
-	"time"
 
 	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
@@ -14,38 +13,35 @@ import (
 
 // Create manages Role create process
 type Create struct {
-	Session    *mgo.Session
-	Who        data.User
-	Role       data.Role
-	ReqPayload CreatePayload
-	ResPayload geninfo.ID
-	Err        error
+	session    *mgo.Session
+	who        data.User
+	role       data.Role
+	reqPayload CreatePayload
+	resPayload geninfo.ID
+	err        error
 }
 
 // Do insert new Role
 func (c *Create) Do() {
 	if err := c.AccessValidate(); err != nil {
-		c.Err = err
+		c.err = err
 		return
 	}
 
 	dtRole := &data.Role{}
-	c.ReqPayload.LoadToData(dtRole)
+	c.reqPayload.LoadToData(dtRole)
 
-	dtRole.CreatedBy = c.Who.ID
-	dtRole.ModifiedBy = c.Who.ID
-	dtRole.CreatedAt = time.Now()
-	dtRole.ModifiedAt = dtRole.CreatedAt
+	dtRole.BeforeCreate(c.who.ID)
 
 	if err := dtRole.Validate(); err != nil {
-		c.Err = err
+		c.err = err
 		return
 	}
 
-	roleDB := db.Role{Session: c.Session}
+	roleDB := db.Role{Session: c.session}
 	err := roleDB.Put(dtRole)
 	if err != nil {
-		c.Err = apperr.Database{
+		c.err = apperr.Database{
 			Base:   err,
 			Where:  "Role",
 			Action: "Create",
@@ -53,23 +49,33 @@ func (c *Create) Do() {
 		return
 	}
 
-	c.ResPayload = geninfo.ID{ID: string(dtRole.ID)}
+	c.resPayload = geninfo.ID{ID: dtRole.ID.Hex()}
 }
 
 // Result returns result of thte action
 func (c Create) Result() (io.Reader, error) {
-	if c.Err != nil {
-		return nil, c.Err
+	if c.err != nil {
+		return nil, c.err
 	}
 
-	return converter.JSONtoBuff(c.ResPayload)
+	return converter.JSONtoBuff(c.resPayload)
 }
 
 // AccessValidate checks access permission
 func (c *Create) AccessValidate() error {
-	if !c.Role.RoleAccess.Can(data.AccessWrite) {
+	if !c.role.RoleAccess.Can(data.AccessWrite) {
 		return apperr.Access{Where: "Role", Permission: string(data.AccessWrite)}
 	}
 
 	return nil
+}
+
+// NewCreate returns create action for role
+func NewCreate(payload CreatePayload, who data.User, role data.Role, ses *mgo.Session) *Create {
+	return &Create{
+		who:        who,
+		role:       role,
+		reqPayload: payload,
+		session:    ses,
+	}
 }

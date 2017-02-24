@@ -20,11 +20,11 @@ func jsonDecode(r *http.Request, des interface{}, where, what string) (errAcc *e
 	return
 }
 
-func idFetch(r *http.Request, where string) (string, *empty.JSON) {
+func idFetch(r *http.Request, from string) (string, *empty.JSON) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	if !bson.IsObjectIdHex(id) {
-		return "", empty.NewJSON(apperr.NewValidation(where, "id", "invalid"))
+		return "", empty.NewJSON(apperr.NewValidation(from, "id", "invalid"))
 	}
 
 	return id, nil

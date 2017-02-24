@@ -2,7 +2,6 @@ package role
 
 import (
 	"io"
-	"time"
 
 	"github.com/rakin-ishmam/pos_server/action/geninfo"
 	"github.com/rakin-ishmam/pos_server/apperr"
@@ -15,31 +14,31 @@ import (
 
 // Update manages Role update process
 type Update struct {
-	Session    *mgo.Session
-	Who        data.User
-	Role       data.Role
-	ReqPayload UpdatePayload
-	ResPayload geninfo.ID
-	Err        error
+	session    *mgo.Session
+	who        data.User
+	role       data.Role
+	reqPayload UpdatePayload
+	resPayload geninfo.ID
+	err        error
 }
 
 // Do updates data.Role
 func (u *Update) Do() {
 	if err := u.AccessValidate(); err != nil {
-		u.Err = err
+		u.err = err
 		return
 	}
 
 	if err := u.Validate(); err != nil {
-		u.Err = err
+		u.err = err
 		return
 	}
 
-	roleDB := db.Role{Session: u.Session}
+	roleDB := db.Role{Session: u.session}
 
-	dtRole, err := roleDB.Get(bson.ObjectIdHex(u.ReqPayload.ID.ID))
+	dtRole, err := roleDB.Get(bson.ObjectIdHex(u.reqPayload.ID.ID))
 	if err != nil {
-		u.Err = apperr.Database{
+		u.err = apperr.Database{
 			Base:   err,
 			Where:  "Role",
 			Action: "Update",
@@ -47,18 +46,17 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.ReqPayload.LoadToData(dtRole)
+	u.reqPayload.LoadToData(dtRole)
 
 	if err := dtRole.Validate(); err != nil {
-		u.Err = err
+		u.err = err
 		return
 	}
 
-	dtRole.ModifiedBy = u.Who.ID
-	dtRole.ModifiedAt = time.Now()
+	dtRole.BeforeUpdate(u.who.ID)
 
 	if err := roleDB.Put(dtRole); err != nil {
-		u.Err = apperr.Database{
+		u.err = apperr.Database{
 			Base:   err,
 			Where:  "Role",
 			Action: "Update",
@@ -66,21 +64,21 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.ResPayload = geninfo.ID{ID: string(dtRole.ID)}
+	u.resPayload = geninfo.ID{ID: dtRole.ID.Hex()}
 }
 
 // Result returns result of thte action
 func (u Update) Result() (io.Reader, error) {
-	if u.Err != nil {
-		return nil, u.Err
+	if u.err != nil {
+		return nil, u.err
 	}
 
-	return converter.JSONtoBuff(u.ResPayload)
+	return converter.JSONtoBuff(u.resPayload)
 }
 
 // AccessValidate checks access permission
 func (u *Update) AccessValidate() error {
-	if !u.Role.RoleAccess.Can(data.AccessUpdate) {
+	if !u.role.RoleAccess.Can(data.AccessUpdate) {
 		return apperr.Access{Where: "Role", Permission: string(data.AccessUpdate)}
 	}
 
@@ -89,13 +87,23 @@ func (u *Update) AccessValidate() error {
 
 // Validate valdes action data
 func (u Update) Validate() error {
-	if !bson.IsObjectIdHex(u.ReqPayload.ID.ID) {
+	if !bson.IsObjectIdHex(u.reqPayload.ID.ID) {
 		return apperr.Validation{
 			Where: "Role",
 			Field: "id",
-			Cause: apperr.ValidationInvalid,
+			Cause: apperr.StrInvalid,
 		}
 	}
 
 	return nil
+}
+
+// NewUpdate returns user update action
+func NewUpdate(payload UpdatePayload, who data.User, role data.Role, ses *mgo.Session) *Update {
+	return &Update{
+		reqPayload: payload,
+		who:        who,
+		role:       role,
+		session:    ses,
+	}
 }

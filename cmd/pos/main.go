@@ -16,7 +16,7 @@ import (
 func main() {
 	test()
 	session, err := mongoSession()
-	fmt.Println("mongo uri", config.MongoURI)
+	fmt.Println("mongo uri", config.MongoURI, "+", config.TokenSecret)
 	if err != nil {
 		fmt.Println("connection error", err)
 		return
