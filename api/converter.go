@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"gopkg.in/mgo.v2/bson"
@@ -14,6 +15,7 @@ import (
 func jsonDecode(r *http.Request, des interface{}, where, what string) (errAcc *empty.JSON) {
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(des); err != nil {
+		log.Println("error:jsonDecode", err)
 		errAcc = empty.NewJSON(apperr.Parse{Where: where, What: what})
 	}
 

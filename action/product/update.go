@@ -63,7 +63,7 @@ func (u *Update) Do() {
 		return
 	}
 
-	u.resPayload = geninfo.ID{ID: string(dtProd.ID)}
+	u.resPayload = geninfo.ID{ID: dtProd.ID.Hex()}
 }
 
 // Result returns result of thte action
