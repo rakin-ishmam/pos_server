@@ -11,7 +11,7 @@ type User struct {
 // EqUserName add EqStep for UserName
 func (u *User) EqUserName(name string) *User {
 	u.chain = append(u.chain, EqStep{
-		Key:   "user_name",
+		Key:   "username",
 		Value: name,
 	})
 

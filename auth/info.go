@@ -4,6 +4,6 @@ import "time"
 
 // Info stores token information
 type Info struct {
-	UserName string
+	Username string
 	Exp      time.Time
 }

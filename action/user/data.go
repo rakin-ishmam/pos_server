@@ -7,16 +7,21 @@ import (
 	"github.com/rakin-ishmam/pos_server/data"
 )
 
+// Token representes user token
+type Token struct {
+	Token string `json:"token"`
+}
+
 // LoginPayload store login info
 type LoginPayload struct {
-	UserName string `json:"user_name"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 // CreatePayload stores create data for User
 type CreatePayload struct {
 	Name      string   `json:"name"`
-	UserName  string   `json:"user_name"`
+	Username  string   `json:"username"`
 	Language  string   `json:"language"`
 	AvtFileID string   `json:"avt_file_id"`
 	RoleID    string   `json:"role_id"`
@@ -30,7 +35,7 @@ type CreatePayload struct {
 // LoadToData copy to data
 func (c *CreatePayload) LoadToData(dtUser *data.User) {
 	dtUser.Name = c.Name
-	dtUser.UserName = c.UserName
+	dtUser.Username = c.Username
 	dtUser.Language = data.Language(c.Language)
 	dtUser.AvtFileID = c.AvtFileID
 	if bson.IsObjectIdHex(c.RoleID) {
@@ -46,7 +51,7 @@ func (c *CreatePayload) LoadToData(dtUser *data.User) {
 // LoadFromData copy data
 func (c *CreatePayload) LoadFromData(dtUser *data.User) {
 	c.Name = dtUser.Name
-	c.UserName = dtUser.UserName
+	c.Username = dtUser.Username
 	c.Language = string(dtUser.Language)
 	c.AvtFileID = dtUser.AvtFileID
 	c.RoleID = dtUser.RoleID.Hex()
@@ -62,7 +67,7 @@ type UpdatePayload struct {
 	geninfo.ID
 
 	Name      string   `json:"name"`
-	UserName  string   `json:"user_name"`
+	Username  string   `json:"username"`
 	Language  string   `json:"language"`
 	AvtFileID string   `json:"avt_file_id"`
 	RoleID    string   `json:"role_id"`
@@ -77,7 +82,7 @@ func (u *UpdatePayload) LoadToData(dtUser *data.User) {
 	u.ID.LoadToData(&dtUser.Track)
 
 	dtUser.Name = u.Name
-	dtUser.UserName = u.UserName
+	dtUser.Username = u.Username
 	dtUser.Language = data.Language(u.Language)
 	dtUser.AvtFileID = u.AvtFileID
 	if bson.IsObjectIdHex(u.RoleID) {
@@ -94,7 +99,7 @@ func (u *UpdatePayload) LoadFromData(dtUser *data.User) {
 	u.ID.LoadFromData(&dtUser.Track)
 
 	u.Name = dtUser.Name
-	u.UserName = dtUser.UserName
+	u.Username = dtUser.Username
 	u.Language = string(dtUser.Language)
 	u.AvtFileID = dtUser.AvtFileID
 	u.RoleID = dtUser.RoleID.Hex()

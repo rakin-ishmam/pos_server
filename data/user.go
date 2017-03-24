@@ -10,7 +10,7 @@ type User struct {
 	Track
 
 	Name      string        `bson:"name"`
-	UserName  string        `bson:"user_name"`
+	Username  string        `bson:"username"`
 	Language  Language      `bson:"language"`
 	AvtFileID string        `bson:"avt_file_id"`
 	RoleID    bson.ObjectId `bson:"role_id,omitempty"`
@@ -23,7 +23,7 @@ type User struct {
 
 // PreSave takes the necessary step before saving data
 func (u *User) PreSave() {
-	u.Track.Search = Spliter(u.Name, u.UserName)
+	u.Track.Search = Spliter(u.Name, u.Username)
 }
 
 // Validate valids user data

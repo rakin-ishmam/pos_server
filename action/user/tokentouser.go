@@ -28,7 +28,7 @@ func (t *TokenToUser) Do() {
 	}
 
 	usrQ := query.User{}
-	usrQ.EqUserName(info.UserName)
+	usrQ.EqUserName(info.Username)
 	usrQ.SetSkip(0)
 	usrQ.SetLimit(1)
 

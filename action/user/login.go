@@ -1,13 +1,13 @@
 package user
 
 import (
-	"bytes"
 	"io"
 	"time"
 
 	"github.com/rakin-ishmam/pos_server/apperr"
 	"github.com/rakin-ishmam/pos_server/auth"
 	"github.com/rakin-ishmam/pos_server/config"
+	"github.com/rakin-ishmam/pos_server/converter"
 	"github.com/rakin-ishmam/pos_server/db"
 	"github.com/rakin-ishmam/pos_server/db/query"
 	mgo "gopkg.in/mgo.v2"
@@ -17,15 +17,14 @@ import (
 type Login struct {
 	Session    *mgo.Session
 	ReqPayload LoginPayload
-	token      string
+	token      Token
 	err        error
 }
 
 // Do generate token
 func (l *Login) Do() {
-
 	userQ := query.User{}
-	userQ.EqPassword(l.ReqPayload.Password).EqUserName(l.ReqPayload.UserName)
+	userQ.EqPassword(l.ReqPayload.Password).EqUserName(l.ReqPayload.Username)
 	userQ.SetSkip(0)
 	userQ.SetLimit(1)
 
@@ -49,8 +48,8 @@ func (l *Login) Do() {
 		return
 	}
 
-	info := auth.Info{UserName: dtUsers[0].UserName, Exp: time.Now()}
-	l.token, l.err = auth.New(info, config.TokenSecret)
+	info := auth.Info{Username: dtUsers[0].Username, Exp: time.Now()}
+	l.token.Token, l.err = auth.New(info, config.TokenSecret)
 }
 
 // Result returns result of the action
@@ -59,6 +58,5 @@ func (l Login) Result() (io.Reader, error) {
 		return nil, l.err
 	}
 
-	buff := bytes.NewBuffer([]byte(l.token))
-	return buff, nil
+	return converter.JSONtoBuff(l.token)
 }

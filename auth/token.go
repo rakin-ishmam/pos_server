@@ -11,7 +11,7 @@ import (
 // New returns jwt token
 func New(info Info, secret string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"UserName": info.UserName,
+		"Username": info.Username,
 		"Exp":      info.Exp.Format(time.RFC3339),
 	})
 
@@ -34,7 +34,7 @@ func Decode(tokenStr, secret string) (*Info, error) {
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 
-		info := Info{UserName: claims["UserName"].(string)}
+		info := Info{Username: claims["Username"].(string)}
 		info.Exp, err = time.Parse(time.RFC3339, claims["Exp"].(string))
 
 		if err != nil {

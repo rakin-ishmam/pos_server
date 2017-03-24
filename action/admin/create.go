@@ -54,7 +54,7 @@ func (c Create) adminUser(role data.Role) data.User {
 	user := data.User{
 		RoleID:   role.ID,
 		Name:     "Admin",
-		UserName: "admin",
+		Username: "admin",
 		Password: "admin",
 	}
 
